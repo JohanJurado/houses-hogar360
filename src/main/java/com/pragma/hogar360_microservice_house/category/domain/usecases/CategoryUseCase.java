@@ -9,6 +9,11 @@ public class CategoryUseCase implements ICategoryServicePort {
 
     private ICategoryPersistencePort categoryPersistencePort;
 
+    public CategoryUseCase(ICategoryPersistencePort categoryPersistencePort) {
+        this.categoryPersistencePort = categoryPersistencePort;
+    }
+
+
     @Override
     public void save(CategoryModel categoryModel) {
         if (categoryPersistencePort.findByName(categoryModel.getName()) != null)

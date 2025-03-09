@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 @Transactional
 @RequiredArgsConstructor
 public class CategoryPersistenceAdapter implements ICategoryPersistencePort {
-    private ICategoryRepository categoryRepository;
-    private ICategoryEntityMapper categoryEntityMapper;
+    private final ICategoryRepository categoryRepository;
+    private final ICategoryEntityMapper categoryEntityMapper;
 
     @Override
     public void save(CategoryModel categoryModel) {
