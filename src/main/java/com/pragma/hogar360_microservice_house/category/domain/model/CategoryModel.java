@@ -7,11 +7,11 @@ import com.pragma.hogar360_microservice_house.category.domain.util.constants.Dom
 import java.util.Objects;
 
 public class CategoryModel {
-    private int id;
+    private Long id;
     private String name;
     private String description;
 
-    public CategoryModel(int id, String name, String description) {
+    public CategoryModel(Long id, String name, String description) {
         if (name.length() > DomainConstants.MAX_NAME_SIZE) throw new NameMaxSizeException();
         if (description.length() > DomainConstants.MAX_DESCRIPTION_SIZE) throw new DescriptionMaxSizeException();
         this.id = id;
@@ -19,11 +19,11 @@ public class CategoryModel {
         this.description = Objects.requireNonNull(description, DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE);
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

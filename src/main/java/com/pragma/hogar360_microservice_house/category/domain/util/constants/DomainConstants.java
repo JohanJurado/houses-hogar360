@@ -8,6 +8,6 @@ public final class DomainConstants {
 
     public static final String FIELD_NAME_NULL_MESSAGE = "Field 'name' can not be null";
     public static final String FIELD_DESCRIPTION_NULL_MESSAGE = "Field 'description' can not be null";
-    public static final int MAX_NAME_SIZE = 50;
-    public static final int MAX_DESCRIPTION_SIZE = 90;
+    public static final Long MAX_NAME_SIZE = 50L;
+    public static final Long MAX_DESCRIPTION_SIZE = 90L;
 }
