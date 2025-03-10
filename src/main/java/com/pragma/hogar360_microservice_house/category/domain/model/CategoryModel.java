@@ -39,8 +39,10 @@ public class CategoryModel {
     }
 
     public void setName(String name) {
+        if (name == null || name.isBlank())
+            throw new NullPointerException(DomainConstants.FIELD_NAME_NULL_MESSAGE);
         if (name.length() > DomainConstants.MAX_NAME_SIZE) throw new NameMaxSizeException();
-        this.name = Objects.requireNonNull(name, DomainConstants.FIELD_NAME_NULL_MESSAGE);
+        this.name = name;
     }
 
     public String getDescription() {
@@ -48,7 +50,9 @@ public class CategoryModel {
     }
 
     public void setDescription(String description) {
+        if (description == null || description.isBlank())
+            throw new NullPointerException(DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE);
         if (description.length() > DomainConstants.MAX_DESCRIPTION_SIZE) throw new DescriptionMaxSizeException();
-        this.description = Objects.requireNonNull(description, DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE);
+        this.description = description;
     }
 }
