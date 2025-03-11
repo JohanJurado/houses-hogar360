@@ -1,8 +1,10 @@
 package com.pragma.hogar360_microservice_house.category.infraestructure.exceptionshandler;
 
 import com.pragma.hogar360_microservice_house.category.domain.exceptions.CategoryAlreadyExistsException;
+import com.pragma.hogar360_microservice_house.category.domain.exceptions.CategoryNotFoundException;
 import com.pragma.hogar360_microservice_house.category.domain.exceptions.DescriptionMaxSizeException;
 import com.pragma.hogar360_microservice_house.category.domain.exceptions.NameMaxSizeException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,4 +45,13 @@ public class ControllerAdvisor {
     public ResponseEntity<ExceptionResponse> nullPointerException(NullPointerException exception){
         return ResponseEntity.badRequest().body(new ExceptionResponse(exception.getMessage(), LocalDateTime.now()));
     }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> categoryNotFoundException(CategoryNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ExceptionResponse(ExceptionConstants.CATEGORY_NOT_FOUND_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
 }
