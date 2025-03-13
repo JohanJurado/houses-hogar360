@@ -1,8 +1,10 @@
 package com.pragma.hogar360_microservice_house.category.infraestructure.endpoints.rest;
 
 import com.pragma.hogar360_microservice_house.category.application.dtos.request.SaveCategoryRequest;
+import com.pragma.hogar360_microservice_house.category.application.dtos.response.CategoryResponse;
 import com.pragma.hogar360_microservice_house.category.application.dtos.response.SaveCategoryResponse;
 import com.pragma.hogar360_microservice_house.category.application.services.ICategoryService;
+import com.pragma.hogar360_microservice_house.commons.configurations.utils.Pagination.Pagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,10 +14,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.awt.print.Book;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -46,5 +48,34 @@ public class CategoryController {
     @PostMapping("/")
     public ResponseEntity<SaveCategoryResponse> save(@RequestBody SaveCategoryRequest saveCategoryRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.save(saveCategoryRequest));
+    }
+
+    @Operation(summary = "Get Categories", description = "Show categories")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Categories found",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Book.class)
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Category or page not found",
+                    content = @Content
+            )
+    })
+    @GetMapping("/")
+    public ResponseEntity<Pagination<CategoryResponse>> save(
+            @RequestParam(defaultValue = "") String nameCategory,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "true") boolean orderAsc
+    ){
+        Pagination<CategoryResponse> response = categoryService.getCategories(nameCategory, page, size, orderAsc);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

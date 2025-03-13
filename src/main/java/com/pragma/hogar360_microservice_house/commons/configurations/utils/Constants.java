@@ -6,4 +6,6 @@ public class Constants {
     }
 
     public static final String SAVE_CATEGORY_RESPONSE_MESSAGE = "Category saved successfully.";
+    public static final String PAGE_NOT_FOUND_MESSAGE = "Page not found.";
+
 }
