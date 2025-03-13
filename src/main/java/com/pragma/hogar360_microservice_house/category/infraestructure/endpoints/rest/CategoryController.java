@@ -63,11 +63,6 @@ public class CategoryController {
                     }
             ),
             @ApiResponse(
-                    responseCode = "204",
-                    description = "Empty pagination content",
-                    content = @Content
-            ),
-            @ApiResponse(
                     responseCode = "404",
                     description = "Category or page not found",
                     content = @Content

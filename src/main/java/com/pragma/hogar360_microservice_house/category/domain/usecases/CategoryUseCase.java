@@ -52,7 +52,7 @@ public class CategoryUseCase implements ICategoryServicePort {
             }
 
             pageContent = categoryModels.subList(fromIndex, toIndex);
-            
+
             return new Pagination<>(pageContent, page, size, totalElements);
         }
         Optional<CategoryModel> categoryFound = categoryPersistencePort.findByName(nameCategory);
