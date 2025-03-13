@@ -16,7 +16,7 @@ public class Pagination<T> {
 
     public Pagination(List<T> content, int pageNumber, int pageSize, int totalElements) {
         this.content = content;
-        this.pageNumber = pageNumber+1;
+        this.pageNumber = pageNumber;
         this.pageSize = pageSize;
         this.totalElements = totalElements;
         this.totalPages = (int) Math.ceil((double) totalElements / pageSize);

@@ -5,7 +5,7 @@ import com.pragma.hogar360_microservice_house.category.domain.exceptions.Categor
 import com.pragma.hogar360_microservice_house.category.domain.exceptions.DescriptionMaxSizeException;
 import com.pragma.hogar360_microservice_house.category.domain.exceptions.NameMaxSizeException;
 import com.pragma.hogar360_microservice_house.commons.configurations.utils.Constants;
-import com.pragma.hogar360_microservice_house.commons.configurations.utils.Pagination.PageNotFound;
+import com.pragma.hogar360_microservice_house.commons.configurations.utils.Pagination.PageNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -56,8 +56,8 @@ public class ControllerAdvisor {
         );
     }
 
-    @ExceptionHandler(PageNotFound.class)
-    public ResponseEntity<ExceptionResponse> pageNotFound(PageNotFound exception){
+    @ExceptionHandler(PageNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> pageNotFound(PageNotFoundException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ExceptionResponse(Constants.PAGE_NOT_FOUND_MESSAGE, LocalDateTime.now()
                 )

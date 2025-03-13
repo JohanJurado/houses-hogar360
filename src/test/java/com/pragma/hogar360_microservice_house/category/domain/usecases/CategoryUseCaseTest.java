@@ -1,5 +1,6 @@
 package com.pragma.hogar360_microservice_house.category.domain.usecases;
 
+import com.pragma.hogar360_microservice_house.category.domain.exceptions.CategoryNotFoundException;
 import com.pragma.hogar360_microservice_house.category.domain.exceptions.DescriptionMaxSizeException;
 import com.pragma.hogar360_microservice_house.category.domain.exceptions.NameMaxSizeException;
 import com.pragma.hogar360_microservice_house.category.domain.exceptions.CategoryAlreadyExistsException;
@@ -7,6 +8,8 @@ import com.pragma.hogar360_microservice_house.category.domain.model.CategoryMode
 import com.pragma.hogar360_microservice_house.category.domain.ports.out.ICategoryPersistencePort;
 import com.pragma.hogar360_microservice_house.category.domain.util.constants.DomainConstants;
 import com.pragma.hogar360_microservice_house.category.utils.TestDataCategory;
+import com.pragma.hogar360_microservice_house.commons.configurations.utils.Pagination.PageNotFoundException;
+import com.pragma.hogar360_microservice_house.commons.configurations.utils.Pagination.Pagination;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -132,6 +136,137 @@ class CategoryUseCaseTest {
         );
         assertEquals(DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE, e.getMessage());
         verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
+    }
+
+    @Test
+    @DisplayName("Get categories when the name category is blank and order is asc")
+    void checkWhenNameCategoryIsBlankAndOrderAscIsTrue(){
+        String nameCategory = TestDataCategory.NAME_CATEGORY_BLANK_PAGINATION;
+        Integer page = TestDataCategory.PAGE_PAGINATION;
+        Integer size = TestDataCategory.SIZE_PAGINATION;
+        boolean orderAsc = TestDataCategory.ORDER_ASC_PAGINATION;
+
+        List<CategoryModel> categoryModelList = TestDataCategory.getCategoryModels();
+
+        Mockito.when(categoryPersistencePort.getAllCategories())
+                .thenReturn(categoryModelList);
+
+        Pagination<CategoryModel> response = categoryUseCase.getCategories(nameCategory, page, size, orderAsc);
+
+        assertEquals(categoryModelList.size(), response.getContent().size());
+        assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
+        assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
+        assertEquals(categoryModelList.size(), response.getTotalElements());
+
+        verify(categoryPersistencePort, times(1)).getAllCategories();
+    }
+
+    @Test
+    @DisplayName("Get categories when the name category is blank and order is desc")
+    void checkWhenNameCategoryIsBlankAndOrderAscIsFalse(){
+        String nameCategory = TestDataCategory.NAME_CATEGORY_BLANK_PAGINATION;
+        Integer page = TestDataCategory.PAGE_PAGINATION;
+        Integer size = TestDataCategory.SIZE_PAGINATION;
+        boolean orderAsc = TestDataCategory.ORDER_DESC_PAGINATION;
+
+        List<CategoryModel> categoryModelList = TestDataCategory.getCategoryModels();
+
+        Mockito.when(categoryPersistencePort.getAllCategories())
+                .thenReturn(categoryModelList);
+
+        Pagination<CategoryModel> response = categoryUseCase.getCategories(nameCategory, page, size, orderAsc);
+
+        assertEquals(categoryModelList.size(), response.getContent().size());
+        assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
+        assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
+        assertEquals(categoryModelList.size(), response.getTotalElements());
+
+        verify(categoryPersistencePort, times(1)).getAllCategories();
+    }
+
+    @Test
+    @DisplayName("Show PageNotFound when the page is not among the possible generated pages")
+    void checkWhenNameCategoryIsBlankAndPageNotFound(){
+        String nameCategory = TestDataCategory.NAME_CATEGORY_BLANK_PAGINATION;
+        Integer page = TestDataCategory.PAGE_NOT_FOUND_PAGINATION;
+        Integer size = TestDataCategory.SIZE_PAGINATION;
+        boolean orderAsc = TestDataCategory.ORDER_ASC_PAGINATION;
+
+        List<CategoryModel> categoryModelList = TestDataCategory.getCategoryModels();
+
+        Mockito.when(categoryPersistencePort.getAllCategories())
+                .thenReturn(categoryModelList);
+
+        assertThrows(
+                PageNotFoundException.class,
+                () -> categoryUseCase.getCategories(nameCategory, page, size, orderAsc),
+                "Expected show PageNotFoundException, but it didn't"
+        );
+        verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
+    }
+
+    @Test
+    @DisplayName("Get category when the name category is present")
+    void checkWhenNameCategoryIsNotBlank(){
+        String nameCategory = TestDataCategory.getNameCategory();
+        Integer page = TestDataCategory.PAGE_PAGINATION;
+        Integer size = TestDataCategory.SIZE_PAGINATION;
+        boolean orderAsc = TestDataCategory.ORDER_DESC_PAGINATION;
+
+        List<CategoryModel> categoryModelList = TestDataCategory.getCategoryModels();
+
+        Mockito.when(categoryPersistencePort.findByName(nameCategory))
+                .thenReturn(Optional.of(TestDataCategory.getCategory()));
+
+        Pagination<CategoryModel> response = categoryUseCase.getCategories(nameCategory, page, size, orderAsc);
+
+        assertEquals(categoryModelList.size(), response.getContent().size());
+        assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
+        assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
+        assertEquals(categoryModelList.size(), response.getTotalElements());
+
+        verify(categoryPersistencePort, times(1)).findByName(nameCategory);
+
+    }
+
+    @Test
+    @DisplayName("Show CategoryNotFoundException when the name category is present")
+    void checkWhenNameCategoryIsNotBlankAndCategoryNotFound(){
+        String nameCategory = TestDataCategory.getNameCategory();
+        Integer page = TestDataCategory.PAGE_PAGINATION;
+        Integer size = TestDataCategory.SIZE_PAGINATION;
+        boolean orderAsc = TestDataCategory.ORDER_DESC_PAGINATION;
+
+        Mockito.when(categoryPersistencePort.findByName(nameCategory))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                CategoryNotFoundException.class,
+                () -> categoryUseCase.getCategories(nameCategory, page, size, orderAsc),
+                "Expected show CategoryNotFoundException, but it didn't"
+        );
+        verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
+
+    }
+    // checkWhenNameCategoryIsNotBlankAndPageNotFound
+    @Test
+    @DisplayName("Show PageNotFound when the page is not among the possible generated pages and name category is present")
+    void checkWhenNameCategoryIsNotBlankAndPageNotFound(){
+        String nameCategory = TestDataCategory.getNameCategory();
+        Integer page = TestDataCategory.PAGE_NOT_FOUND_PAGINATION;
+        Integer size = TestDataCategory.SIZE_PAGINATION;
+        boolean orderAsc = TestDataCategory.ORDER_DESC_PAGINATION;
+
+        Mockito.when(categoryPersistencePort.findByName(nameCategory))
+                .thenReturn(Optional.of(TestDataCategory.getCategory()));
+
+        assertThrows(
+                PageNotFoundException.class,
+                () -> categoryUseCase.getCategories(nameCategory, page, size, orderAsc),
+                "Expected show PageNotFound, but it didn't"
+        );
+        verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
+
     }
 
 }

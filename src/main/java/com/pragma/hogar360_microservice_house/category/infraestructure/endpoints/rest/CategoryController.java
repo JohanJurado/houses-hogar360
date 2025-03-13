@@ -63,8 +63,13 @@ public class CategoryController {
                     }
             ),
             @ApiResponse(
+                    responseCode = "204",
+                    description = "Empty pagination content",
+                    content = @Content
+            ),
+            @ApiResponse(
                     responseCode = "404",
-                    description = "Category not found",
+                    description = "Category or page not found",
                     content = @Content
             )
     })
@@ -75,6 +80,7 @@ public class CategoryController {
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "true") boolean orderAsc
     ){
-        return ResponseEntity.status(HttpStatus.FOUND).body(categoryService.getCategories(nameCategory, page, size, orderAsc));
+        Pagination<CategoryResponse> response = categoryService.getCategories(nameCategory, page, size, orderAsc);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
