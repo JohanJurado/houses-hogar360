@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,17 +28,12 @@ public class CategoryPersistenceAdapter implements ICategoryPersistencePort {
     }
 
     @Override
-    public CategoryModel findByName(String name) {
-        return categoryEntityMapper.entityToModel(categoryRepository.findByName(name));
+    public Optional<CategoryModel> findByName(String name) {
+        return categoryEntityMapper.entityOptionalToModelOptional(categoryRepository.findByName(name));
     }
 
     @Override
-    public List<CategoryModel> getAllCategories(Integer page, Integer size, boolean orderAsc) {
-        Pageable pagination;
-
-        if (orderAsc) pagination = PageRequest.of(page, size, Sort.by(Constants.PAGEABLE_FIELD_NAME).ascending());
-        else pagination = PageRequest.of(page, size, Sort.by(Constants.PAGEABLE_FIELD_NAME).descending());
-
-        return categoryEntityMapper.entityListToModelList(categoryRepository.findAll(pagination).getContent());
+    public List<CategoryModel> getAllCategories() {
+        return categoryEntityMapper.entityListToModelList(categoryRepository.findAll());
     }
 }

@@ -4,6 +4,7 @@ import com.pragma.hogar360_microservice_house.category.application.dtos.request.
 import com.pragma.hogar360_microservice_house.category.application.dtos.response.CategoryResponse;
 import com.pragma.hogar360_microservice_house.category.application.dtos.response.SaveCategoryResponse;
 import com.pragma.hogar360_microservice_house.category.application.services.ICategoryService;
+import com.pragma.hogar360_microservice_house.commons.configurations.utils.Pagination.Pagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -68,12 +69,12 @@ public class CategoryController {
             )
     })
     @GetMapping("/")
-    public ResponseEntity<List<CategoryResponse>> save(
+    public ResponseEntity<Pagination<CategoryResponse>> save(
             @RequestParam(defaultValue = "") String nameCategory,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "true") boolean orderAsc
     ){
-        return ResponseEntity.status(HttpStatus.FOUND).body(categoryService.get(nameCategory, page, size, orderAsc));
+        return ResponseEntity.status(HttpStatus.FOUND).body(categoryService.getCategories(nameCategory, page, size, orderAsc));
     }
 }

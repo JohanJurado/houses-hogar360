@@ -7,11 +7,11 @@ import com.pragma.hogar360_microservice_house.category.application.mappers.ICate
 import com.pragma.hogar360_microservice_house.category.application.services.ICategoryService;
 import com.pragma.hogar360_microservice_house.category.domain.ports.in.ICategoryServicePort;
 import com.pragma.hogar360_microservice_house.commons.configurations.utils.Constants;
+import com.pragma.hogar360_microservice_house.commons.configurations.utils.Pagination.Pagination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
-    public List<CategoryResponse> get(String nameCategory, Integer page, Integer size, boolean orderAsc) {
-        return categoryDtoMapper.modelListToResponseList(categoryServicePort.get(nameCategory, page, size, orderAsc));
+    public Pagination<CategoryResponse> getCategories(String nameCategory, Integer page, Integer size, boolean orderAsc) {
+        return categoryDtoMapper.modelPaginationToResponsePagination(categoryServicePort.getCategories(nameCategory, page, size, orderAsc));
     }
 }

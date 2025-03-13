@@ -4,6 +4,7 @@ import com.pragma.hogar360_microservice_house.category.application.dtos.request.
 import com.pragma.hogar360_microservice_house.category.application.dtos.response.CategoryResponse;
 import com.pragma.hogar360_microservice_house.category.application.dtos.response.SaveCategoryResponse;
 import com.pragma.hogar360_microservice_house.category.domain.model.CategoryModel;
+import com.pragma.hogar360_microservice_house.commons.configurations.utils.Pagination.Pagination;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -14,6 +15,24 @@ import java.util.List;
 public interface ICategoryDtoMapper {
 
     CategoryModel requestToModel(SaveCategoryRequest saveCategoryRequest);
-    List<CategoryResponse> modelListToResponseList(List<CategoryModel> categoryModels);
+    CategoryResponse modelToResponse(CategoryModel categoryModel);
+
+    default Pagination<CategoryResponse> modelPaginationToResponsePagination(Pagination<CategoryModel> categoryModels) {
+        if (categoryModels == null) {
+            return null;
+        }
+
+        List<CategoryResponse> content = categoryModels.getContent()
+                .stream()
+                .map(this::modelToResponse)
+                .toList();
+
+        return new Pagination<>(
+                content,
+                categoryModels.getPageNumber(),
+                categoryModels.getPageSize(),
+                categoryModels.getTotalElements()
+        );
+    }
 
 }

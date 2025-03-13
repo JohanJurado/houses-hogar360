@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -30,10 +32,10 @@ class CategoryUseCaseTest {
     @Test
     @DisplayName("Create Category")
     void checkWhenCategorySavedCorrectly(){
-        CategoryModel categoryIn = TestDataCategory.getCategory;
+        CategoryModel categoryIn = TestDataCategory.getCategory();
 
         Mockito.when(categoryPersistencePort.findByName(categoryIn.getName()))
-                    .thenReturn(null);
+                    .thenReturn(Optional.empty());
 
         categoryUseCase.save(categoryIn);
 
@@ -46,10 +48,10 @@ class CategoryUseCaseTest {
     @Test
     @DisplayName("Show CategoryAlreadyExistException when the category exists in BD")
     void checkWhenCategoryAlreadyExists(){
-        CategoryModel categoryIn = TestDataCategory.getCategory;
+        CategoryModel categoryIn = TestDataCategory.getCategory();
 
         Mockito.when(categoryPersistencePort.findByName(categoryIn.getName()))
-                .thenReturn(categoryIn);
+                .thenReturn(Optional.of(categoryIn));
 
         assertThrows(
                 CategoryAlreadyExistsException.class,
