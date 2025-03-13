@@ -1,15 +1,16 @@
 package com.pragma.hogar360_microservice_house.category.domain.usecases;
 
-import com.pragma.hogar360_microservice_house.category.domain.exceptions.CategoryNotFoundException;
-import com.pragma.hogar360_microservice_house.category.domain.exceptions.DescriptionMaxSizeException;
-import com.pragma.hogar360_microservice_house.category.domain.exceptions.NameMaxSizeException;
-import com.pragma.hogar360_microservice_house.category.domain.exceptions.CategoryAlreadyExistsException;
-import com.pragma.hogar360_microservice_house.category.domain.model.CategoryModel;
-import com.pragma.hogar360_microservice_house.category.domain.ports.out.ICategoryPersistencePort;
-import com.pragma.hogar360_microservice_house.category.domain.util.constants.DomainConstants;
+import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryNotFoundException;
+import com.pragma.hogar360_microservice_house.domain.exceptions.DescriptionMaxSizeException;
+import com.pragma.hogar360_microservice_house.domain.exceptions.NameMaxSizeException;
+import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryAlreadyExistsException;
+import com.pragma.hogar360_microservice_house.domain.model.CategoryModel;
+import com.pragma.hogar360_microservice_house.domain.ports.out.ICategoryPersistencePort;
+import com.pragma.hogar360_microservice_house.domain.usecases.CategoryUseCase;
+import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
 import com.pragma.hogar360_microservice_house.category.utils.TestDataCategory;
-import com.pragma.hogar360_microservice_house.commons.configurations.utils.Pagination.PageNotFoundException;
-import com.pragma.hogar360_microservice_house.commons.configurations.utils.Pagination.Pagination;
+import com.pragma.hogar360_microservice_house.domain.exceptions.PageNotFoundException;
+import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

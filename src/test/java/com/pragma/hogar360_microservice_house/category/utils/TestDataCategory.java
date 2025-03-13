@@ -1,10 +1,9 @@
 package com.pragma.hogar360_microservice_house.category.utils;
 
 
-import com.pragma.hogar360_microservice_house.category.domain.model.CategoryModel;
+import com.pragma.hogar360_microservice_house.domain.model.CategoryModel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class TestDataCategory {
