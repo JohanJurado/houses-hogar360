@@ -11,20 +11,20 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class ControllerAdvisor {
 
-    @ExceptionHandler(NameMaxSizeException.class)
-    public ResponseEntity<ExceptionResponse> nameMaxSizeException(NameMaxSizeException exception){
+    @ExceptionHandler(CategoryNameMaxSizeExceedException.class)
+    public ResponseEntity<ExceptionResponse> nameMaxSizeException(CategoryNameMaxSizeExceedException exception){
         return ResponseEntity.badRequest().body(
                 new ExceptionResponse(
-                    ExceptionConstants.NAME_MAX_SIZE_MESSAGE, LocalDateTime.now()
+                    ExceptionConstants.CATEGORY_NAME_MAX_SIZE_MESSAGE, LocalDateTime.now()
                 )
         );
     }
 
-    @ExceptionHandler(DescriptionMaxSizeException.class)
-    public ResponseEntity<ExceptionResponse> descriptionMaxSizeException(DescriptionMaxSizeException exception){
+    @ExceptionHandler(CategoryDescriptionMaxSizeExceedException.class)
+    public ResponseEntity<ExceptionResponse> descriptionMaxSizeException(CategoryDescriptionMaxSizeExceedException exception){
         return ResponseEntity.badRequest().body(
                 new ExceptionResponse(
-                    ExceptionConstants.DESCRIPTION_MAX_SIZE_MESSAGE, LocalDateTime.now()
+                    ExceptionConstants.CATEGORY_DESCRIPTION_MAX_SIZE_MESSAGE, LocalDateTime.now()
                 )
         );
     }
@@ -59,12 +59,27 @@ public class ControllerAdvisor {
         );
     }
 
-    @ExceptionHandler(DepartmentAlreadyExistsException.class)
-    public ResponseEntity<ExceptionResponse> departmentAlreadyExistsException(DepartmentAlreadyExistsException exception){
+    @ExceptionHandler(LocationAlreadyExistsException.class)
+    public ResponseEntity<ExceptionResponse> departmentAlreadyExistsException(LocationAlreadyExistsException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ExceptionResponse(ExceptionConstants.DEPARTMENT_EXIST_MESSAGE, LocalDateTime.now()
                 )
         );
     }
 
+    @ExceptionHandler(LocationNameMaxSizeExceedException.class)
+    public ResponseEntity<ExceptionResponse> locationNameMaxSizeException(LocationNameMaxSizeExceedException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_NAME_MAX_SIZE_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(LocationDescriptionMaxSizeExceedException.class)
+    public ResponseEntity<ExceptionResponse> locationDescriptionMaxSizeException(LocationDescriptionMaxSizeExceedException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_DESCRIPTION_MAX_SIZE_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
 }

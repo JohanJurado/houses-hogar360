@@ -1,4 +1,4 @@
-package com.pragma.hogar360_microservice_house.category.utils;
+package com.pragma.hogar360_microservice_house.utils;
 
 
 import com.pragma.hogar360_microservice_house.domain.model.CategoryModel;

@@ -1,7 +1,7 @@
 package com.pragma.hogar360_microservice_house.domain.model;
 
-import com.pragma.hogar360_microservice_house.domain.exceptions.DescriptionMaxSizeException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.NameMaxSizeException;
+import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryDescriptionMaxSizeExceedException;
+import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryNameMaxSizeExceedException;
 import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
 import com.pragma.hogar360_microservice_house.domain.util.validations.Validations;
 
@@ -29,7 +29,7 @@ public class CategoryModel {
 
     public void setName(String name) {
         Validations.validationByAttributeIsNullOrBlank(name, DomainConstants.FIELD_NAME_NULL_MESSAGE);
-        Validations.validationByLimitCharacters(name, DomainConstants.MAX_NAME_SIZE_CATEGORY, new NameMaxSizeException());
+        Validations.validationByLimitCharacters(name, DomainConstants.MAX_NAME_SIZE_CATEGORY, new CategoryNameMaxSizeExceedException());
         this.name = name;
     }
 
@@ -39,7 +39,7 @@ public class CategoryModel {
 
     public void setDescription(String description) {
         Validations.validationByAttributeIsNullOrBlank(description, DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE);
-        Validations.validationByLimitCharacters(description, DomainConstants.MAX_DESCRIPTION_SIZE_CATEGORY, new DescriptionMaxSizeException());
+        Validations.validationByLimitCharacters(description, DomainConstants.MAX_DESCRIPTION_SIZE_CATEGORY, new CategoryDescriptionMaxSizeExceedException());
         this.description = description;
     }
 }

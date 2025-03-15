@@ -2,7 +2,7 @@ package com.pragma.hogar360_microservice_house.application.services.impl;
 
 import com.pragma.hogar360_microservice_house.application.dtos.request.SaveCategoryRequest;
 import com.pragma.hogar360_microservice_house.application.dtos.response.CategoryResponse;
-import com.pragma.hogar360_microservice_house.application.dtos.response.SaveCategoryResponse;
+import com.pragma.hogar360_microservice_house.application.dtos.response.SaveDtoResponses;
 import com.pragma.hogar360_microservice_house.application.mappers.ICategoryDtoMapper;
 import com.pragma.hogar360_microservice_house.application.services.ICategoryService;
 import com.pragma.hogar360_microservice_house.application.utils.ApplicationConstants;
@@ -20,9 +20,9 @@ public class CategoryServiceImpl implements ICategoryService {
     private final ICategoryDtoMapper categoryDtoMapper;
 
     @Override
-    public SaveCategoryResponse save(SaveCategoryRequest saveCategoryRequest) {
+    public SaveDtoResponses save(SaveCategoryRequest saveCategoryRequest) {
         categoryServicePort.save(categoryDtoMapper.requestToModel(saveCategoryRequest));
-        return new SaveCategoryResponse(ApplicationConstants.SAVE_CATEGORY_RESPONSE_MESSAGE, LocalDateTime.now());
+        return new SaveDtoResponses(ApplicationConstants.SAVE_CATEGORY_RESPONSE_MESSAGE, LocalDateTime.now());
     }
 
     @Override

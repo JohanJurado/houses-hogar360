@@ -1,14 +1,13 @@
-package com.pragma.hogar360_microservice_house.category.domain.usecases;
+package com.pragma.hogar360_microservice_house.domain.usecases;
 
 import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryNotFoundException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.DescriptionMaxSizeException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.NameMaxSizeException;
+import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryDescriptionMaxSizeExceedException;
+import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryNameMaxSizeExceedException;
 import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryAlreadyExistsException;
 import com.pragma.hogar360_microservice_house.domain.model.CategoryModel;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ICategoryPersistencePort;
-import com.pragma.hogar360_microservice_house.domain.usecases.CategoryUseCase;
 import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
-import com.pragma.hogar360_microservice_house.category.utils.TestDataCategory;
+import com.pragma.hogar360_microservice_house.utils.TestDataCategory;
 import com.pragma.hogar360_microservice_house.domain.exceptions.PageNotFoundException;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +72,7 @@ class CategoryUseCaseTest {
     @DisplayName("Show NameMaxSizeException when the name exceed 50 characters")
     void checkWhenCategoryNameMaxExceed(){
         assertThrows(
-                NameMaxSizeException.class,
+                CategoryNameMaxSizeExceedException.class,
                 TestDataCategory::getCategoryMaxName,
                 "Expected save to throw NameMaxSizeException, but it didn't"
         );
@@ -84,7 +83,7 @@ class CategoryUseCaseTest {
     @DisplayName("Show DescriptionMaxSizeException when the description exceed 90 characters")
     void checkWhenCategoryDescriptionMaxExceed(){
         assertThrows(
-                DescriptionMaxSizeException.class,
+                CategoryDescriptionMaxSizeExceedException.class,
                 TestDataCategory::getCategoryMaxDescription,
                 "Expected save to throw DescriptionMaxSizeException, but it didn't"
         );

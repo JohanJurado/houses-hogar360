@@ -2,7 +2,7 @@ package com.pragma.hogar360_microservice_house.infraestructure.endpoints.rest;
 
 import com.pragma.hogar360_microservice_house.application.dtos.request.SaveCategoryRequest;
 import com.pragma.hogar360_microservice_house.application.dtos.response.CategoryResponse;
-import com.pragma.hogar360_microservice_house.application.dtos.response.SaveCategoryResponse;
+import com.pragma.hogar360_microservice_house.application.dtos.response.SaveDtoResponses;
 import com.pragma.hogar360_microservice_house.application.services.ICategoryService;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +34,7 @@ public class CategoryController {
             content = {
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = SaveCategoryResponse.class)
+                    schema = @Schema(implementation = SaveDtoResponses.class)
                 )
             }
         ),
@@ -45,7 +45,7 @@ public class CategoryController {
         )
     })
     @PostMapping("/")
-    public ResponseEntity<SaveCategoryResponse> save(@RequestBody SaveCategoryRequest saveCategoryRequest){
+    public ResponseEntity<SaveDtoResponses> save(@RequestBody SaveCategoryRequest saveCategoryRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.save(saveCategoryRequest));
     }
 
