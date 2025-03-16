@@ -82,4 +82,20 @@ public class ControllerAdvisor {
                 )
         );
     }
+
+    @ExceptionHandler(LocationNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> locationNotFoundException(LocationNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_NOT_FOUND_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(LocationOrderNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> locationOrderNotFoundException(LocationOrderNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_ORDER_NOT_FOUND_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
 }
