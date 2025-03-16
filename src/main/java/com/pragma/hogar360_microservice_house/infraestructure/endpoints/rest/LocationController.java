@@ -1,8 +1,10 @@
 package com.pragma.hogar360_microservice_house.infraestructure.endpoints.rest;
 
 import com.pragma.hogar360_microservice_house.application.dtos.request.SaveLocationRequest;
+import com.pragma.hogar360_microservice_house.application.dtos.response.LocationResponse;
 import com.pragma.hogar360_microservice_house.application.dtos.response.SaveDtoResponses;
 import com.pragma.hogar360_microservice_house.application.services.ILocationService;
+import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,10 +14,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.awt.print.Book;
 
 @RequiredArgsConstructor
 @RestController
@@ -46,5 +47,35 @@ public class LocationController {
     @PostMapping("/")
     public ResponseEntity<SaveDtoResponses> save(@RequestBody SaveLocationRequest saveLocationRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(locationService.save(saveLocationRequest));
+    }
+
+    @Operation(summary = "Get Locations", description = "Show locations")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Locations found",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Book.class)
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Location or page not found",
+                    content = @Content
+            )
+    })
+    @GetMapping("/")
+    public ResponseEntity<Pagination<LocationResponse>> getLocations(
+            @RequestParam(defaultValue = "") String nameLocation,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "") String orderBy,
+            @RequestParam(defaultValue = "true") boolean orderAsc
+    ){
+        Pagination<LocationResponse> response = locationService.getLocations(nameLocation, page, size, orderBy, orderAsc);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

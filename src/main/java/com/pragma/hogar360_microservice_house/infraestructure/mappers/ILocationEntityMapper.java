@@ -7,26 +7,35 @@ import com.pragma.hogar360_microservice_house.infraestructure.entities.Departmen
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public interface ILocationEntityMapper {
 
-    @Mapping(target = "departmentModelList", source="departmentEntityList")
     CityModel entityToModelCity(CityEntity cityEntity);
     default Optional<CityModel> entityOptionalToModelOptionalCity(Optional<CityEntity> cityEntity){
         return cityEntity.map(this::entityToModelCity);
     }
-    @Mapping(target = "departmentEntityList", source="departmentModelList")
     CityEntity modelToEntityCity(CityModel cityModel);
+    default List<CityModel> entityListToModelListCity(List<CityEntity> cityEntity){
+        return cityEntity.stream()
+                .map(this::entityToModelCity)
+                .toList();
+    }
 
     @Mapping(target = "id", source="id")
     @Mapping(target = "name", source="name")
     @Mapping(target = "description", source="description")
     @Mapping(target = "city", source="city")
     DepartmentModel entityToModelDepartment(DepartmentEntity departmentEntity);
+
     default Optional<DepartmentModel> entityOptionalToModelOptionalDepartment(Optional<DepartmentEntity> departmentEntity){
         return departmentEntity.map(this::entityToModelDepartment);
     }
+    @Mapping(target = "id", source="id")
+    @Mapping(target = "name", source="name")
+    @Mapping(target = "description", source="description")
+    @Mapping(target = "city", source="city")
     DepartmentEntity modelToEntityDepartment(DepartmentModel departmentModel);
 }

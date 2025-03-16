@@ -68,7 +68,7 @@ public class CategoryController {
             )
     })
     @GetMapping("/")
-    public ResponseEntity<Pagination<CategoryResponse>> save(
+    public ResponseEntity<Pagination<CategoryResponse>> getCategories(
             @RequestParam(defaultValue = "") String nameCategory,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,

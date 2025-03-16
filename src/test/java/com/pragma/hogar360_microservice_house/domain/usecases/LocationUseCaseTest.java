@@ -1,11 +1,11 @@
 package com.pragma.hogar360_microservice_house.domain.usecases;
 
-import com.pragma.hogar360_microservice_house.domain.exceptions.LocationAlreadyExistsException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.LocationDescriptionMaxSizeExceedException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.LocationNameMaxSizeExceedException;
+import com.pragma.hogar360_microservice_house.domain.exceptions.*;
 import com.pragma.hogar360_microservice_house.domain.model.CityModel;
 import com.pragma.hogar360_microservice_house.domain.model.DepartmentModel;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersistencePort;
+import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
+import com.pragma.hogar360_microservice_house.utils.TestDataCategory;
 import com.pragma.hogar360_microservice_house.utils.TestDataLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +15,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -243,5 +245,224 @@ class LocationUseCaseTest {
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
+    }
+
+
+    @Test
+    @DisplayName("get Locations Order By City Asc")
+    void getLocationsOrderByCityAsc(){
+        String nameLocation = TestDataLocation.NAME_LOCATION_BLANK_PAGINATION;
+        Integer page = TestDataLocation.PAGE_PAGINATION;
+        Integer size = TestDataLocation.SIZE_PAGINATION;
+        String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
+        boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
+
+        Mockito.when(locationPersistencePort.getAllDepartments())
+                .thenReturn(TestDataLocation.getLocationsModels());
+
+        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+
+        assertEquals(TestDataLocation.getLocationsModels().size(), response.getContent().size());
+        assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
+        assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
+
+        verify(locationPersistencePort, times(1)).getAllDepartments();
+    }
+
+    @Test
+    @DisplayName("get Locations Order By City Desc")
+    void getLocationsOrderByCityDesc(){
+        String nameLocation = TestDataLocation.NAME_LOCATION_BLANK_PAGINATION;
+        Integer page = TestDataLocation.PAGE_PAGINATION;
+        Integer size = TestDataLocation.SIZE_PAGINATION;
+        String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
+        boolean orderAsc = TestDataLocation.ORDER_DESC_PAGINATION;
+
+        Mockito.when(locationPersistencePort.getAllDepartments())
+                .thenReturn(TestDataLocation.getLocationsModels());
+
+        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+
+        assertEquals(TestDataLocation.getLocationsModels().size(), response.getContent().size());
+        assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
+        assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
+
+        verify(locationPersistencePort, times(1)).getAllDepartments();
+    }
+
+    @Test
+    @DisplayName("show PageNotFoundException When The Page Is Not Among The Possible Generated Pages")
+    void showPageNotFoundException(){
+        String nameLocation = TestDataLocation.NAME_LOCATION_BLANK_PAGINATION;
+        Integer page = TestDataLocation.PAGE_NOT_FOUND_PAGINATION;
+        Integer size = TestDataLocation.SIZE_PAGINATION;
+        String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
+        boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
+
+        Mockito.when(locationPersistencePort.getAllDepartments())
+                .thenReturn(TestDataLocation.getLocationsModels());
+
+        assertThrows(
+                PageNotFoundException.class,
+                () -> locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc),
+                "Expected show PageNotFoundException, but it didn't"
+        );
+    }
+
+    @Test
+    @DisplayName("order By Department When List Size Is 1")
+    void orderByDepartmentWhenListSizeIs1(){
+        String nameLocation = TestDataLocation.NAME_LOCATION_BLANK_PAGINATION;
+        Integer page = TestDataLocation.PAGE_PAGINATION;
+        Integer size = TestDataLocation.SIZE_PAGINATION;
+        String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
+        boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
+
+        Mockito.when(locationPersistencePort.getAllDepartments())
+                .thenReturn(TestDataLocation.getLocationsModelsSize1());
+
+        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+
+        assertEquals(TestDataLocation.getLocationsModelsSize1().size(), response.getContent().size());
+        assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
+        assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
+
+        verify(locationPersistencePort, times(1)).getAllDepartments();
+    }
+
+    @Test
+    @DisplayName("order By Department Asc")
+    void orderByDepartmentAsc(){
+        String nameLocation = TestDataLocation.NAME_LOCATION_BLANK_PAGINATION;
+        Integer page = TestDataLocation.PAGE_PAGINATION;
+        Integer size = TestDataLocation.SIZE_PAGINATION;
+        String orderBy = TestDataLocation.ORDER_BY_DEPARTMENT_PAGINATION;
+        boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
+
+        Mockito.when(locationPersistencePort.getAllDepartments())
+                .thenReturn(TestDataLocation.getLocationsModels());
+
+        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+
+        assertEquals(TestDataLocation.getLocationsModels().size(), response.getContent().size());
+        assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
+        assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
+
+        verify(locationPersistencePort, times(1)).getAllDepartments();
+    }
+
+    @Test
+    @DisplayName("order By Department Desc")
+    void orderByDepartmentDesc(){
+        String nameLocation = TestDataLocation.NAME_LOCATION_BLANK_PAGINATION;
+        Integer page = TestDataLocation.PAGE_PAGINATION;
+        Integer size = TestDataLocation.SIZE_PAGINATION;
+        String orderBy = TestDataLocation.ORDER_BY_DEPARTMENT_PAGINATION;
+        boolean orderAsc = TestDataLocation.ORDER_DESC_PAGINATION;
+
+        Mockito.when(locationPersistencePort.getAllDepartments())
+                .thenReturn(TestDataLocation.getLocationsModels());
+
+        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+
+        assertEquals(TestDataLocation.getLocationsModels().size(), response.getContent().size());
+        assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
+        assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
+
+        verify(locationPersistencePort, times(1)).getAllDepartments();
+    }
+
+    @Test
+    @DisplayName("show LocationOrderNotFoundException When Order By Other")
+    void showLocationOrderNotFoundExceptionWhenOrderByOther(){
+        String nameLocation = TestDataLocation.NAME_LOCATION_BLANK_PAGINATION;
+        Integer page = TestDataLocation.PAGE_PAGINATION;
+        Integer size = TestDataLocation.SIZE_PAGINATION;
+        String orderBy = TestDataLocation.ORDER_BY_OTHER_PAGINATION;
+        boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
+
+        Mockito.when(locationPersistencePort.getAllDepartments())
+                .thenReturn(TestDataLocation.getLocationsModels());
+
+        assertThrows(
+                LocationOrderNotFoundException.class,
+                () -> locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc),
+                "Expected show LocationOrderNotFoundException, but it didn't"
+        );
+    }
+
+    @Test
+    @DisplayName("get Locations When Name Location Is A City")
+    void getLocationsWhenNameLocationIsACity(){
+        String nameLocation = TestDataLocation.getNameLocation();
+        Integer page = TestDataLocation.PAGE_PAGINATION;
+        Integer size = TestDataLocation.SIZE_PAGINATION;
+        String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
+        boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
+
+        Mockito.when(locationPersistencePort.findCityByName(nameLocation.toUpperCase()))
+                .thenReturn(Optional.of(TestDataLocation.getCityModel()));
+
+        Mockito.when(locationPersistencePort.findAllByCityName(nameLocation))
+                .thenReturn(TestDataLocation.getLocationsModels());
+
+        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+
+        assertEquals(TestDataLocation.getLocationsModels().size(), response.getContent().size());
+        assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
+        assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
+
+        verify(locationPersistencePort, times(1)).findCityByName(nameLocation.toUpperCase());
+        verify(locationPersistencePort, times(1)).findAllByCityName(nameLocation);
+    }
+
+    @Test
+    @DisplayName("get Locations When Name Location Is A Department")
+    void getLocationsWhenNameLocationIsADepartment(){
+        String nameLocation = TestDataLocation.getNameLocation();
+        Integer page = TestDataLocation.PAGE_PAGINATION;
+        Integer size = TestDataLocation.SIZE_PAGINATION;
+        String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
+        boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
+
+        Mockito.when(locationPersistencePort.findCityByName(nameLocation.toUpperCase()))
+                .thenReturn(Optional.empty());
+
+        Mockito.when(locationPersistencePort.findDepartmentByName(nameLocation.toUpperCase()))
+                .thenReturn(Optional.of(TestDataLocation.getDepartmentModel()));
+
+        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+
+        assertEquals(List.of(TestDataLocation.getDepartmentModel()).size(), response.getContent().size());
+        assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
+        assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
+
+        verify(locationPersistencePort, times(1)).findCityByName(nameLocation.toUpperCase());
+        verify(locationPersistencePort, times(2)).findDepartmentByName(nameLocation.toUpperCase());
+    }
+
+    @Test
+    @DisplayName("show LocationNotFoundException When Name Location Is Not A City Or Department")
+    void showLocationNotFoundWhenNameLocationIsNotACityOrDepartment(){
+        String nameLocation = TestDataLocation.getNameLocation();
+        Integer page = TestDataLocation.PAGE_PAGINATION;
+        Integer size = TestDataLocation.SIZE_PAGINATION;
+        String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
+        boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
+
+        Mockito.when(locationPersistencePort.findCityByName(nameLocation.toUpperCase()))
+                .thenReturn(Optional.empty());
+
+        Mockito.when(locationPersistencePort.findDepartmentByName(nameLocation.toUpperCase()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                LocationNotFoundException.class,
+                () -> locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc),
+                "Expected show LocationNotFoundException, but it didn't"
+        );
+
+        verify(locationPersistencePort, times(1)).findCityByName(nameLocation.toUpperCase());
+        verify(locationPersistencePort, times(1)).findDepartmentByName(nameLocation.toUpperCase());
     }
 }

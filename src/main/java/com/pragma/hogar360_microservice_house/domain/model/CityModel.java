@@ -13,8 +13,6 @@ public class CityModel {
     private String name;
     private String description;
 
-    private List<DepartmentModel> departmentModelList;
-
     public CityModel() {
         // Empty constructor to validate with setters
     }
@@ -45,13 +43,5 @@ public class CityModel {
         Validations.validationByAttributeIsNullOrBlank(description, DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE);
         Validations.validationByLimitCharacters(description, DomainConstants.MAX_DESCRIPTION_SIZE_LOCATION, new LocationDescriptionMaxSizeExceedException());
         this.description = description;
-    }
-
-    public List<DepartmentModel> getDepartmentModelList() {
-        return departmentModelList;
-    }
-
-    public void setDepartmentModelList(List<DepartmentModel> departmentModelList) {
-        this.departmentModelList = departmentModelList;
     }
 }
