@@ -3,8 +3,6 @@ package com.pragma.hogar360_microservice_house.infraestructure.entities;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @NoArgsConstructor
 @Table(name="city")

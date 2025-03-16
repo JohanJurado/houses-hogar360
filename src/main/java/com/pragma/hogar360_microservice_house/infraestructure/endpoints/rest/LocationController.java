@@ -1,7 +1,6 @@
 package com.pragma.hogar360_microservice_house.infraestructure.endpoints.rest;
 
 import com.pragma.hogar360_microservice_house.application.dtos.request.SaveLocationRequest;
-import com.pragma.hogar360_microservice_house.application.dtos.response.CategoryResponse;
 import com.pragma.hogar360_microservice_house.application.dtos.response.LocationResponse;
 import com.pragma.hogar360_microservice_house.application.dtos.response.SaveDtoResponses;
 import com.pragma.hogar360_microservice_house.application.services.ILocationService;

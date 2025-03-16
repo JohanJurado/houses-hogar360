@@ -1,7 +1,6 @@
 package com.pragma.hogar360_microservice_house.domain.usecases;
 
 import com.pragma.hogar360_microservice_house.domain.exceptions.*;
-import com.pragma.hogar360_microservice_house.domain.model.CategoryModel;
 import com.pragma.hogar360_microservice_house.domain.model.CityModel;
 import com.pragma.hogar360_microservice_house.domain.model.DepartmentModel;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersistencePort;
