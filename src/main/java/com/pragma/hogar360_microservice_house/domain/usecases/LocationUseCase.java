@@ -26,6 +26,7 @@ public class LocationUseCase implements ILocationServicePort {
         if (cityModelFound.isEmpty()){
             CityModel cityModelSave = locationPersistencePort.saveCity(cityModel);
             departmentModel.setCity(cityModelSave);
+            locationPersistencePort.saveDepartment(departmentModel);
         } else {
             departmentModel.setCity(cityModelFound.orElse(null));
             locationPersistencePort.saveDepartment(departmentModel);
@@ -37,44 +38,29 @@ public class LocationUseCase implements ILocationServicePort {
         if (nameLocation.isBlank()) {
             return getAllLocations(page, size, orderBy, orderAsc);
         }
-        return getLocationsByNameLocation(nameLocation, page, size, orderAsc);
+        return getLocationsByNameLocation(nameLocation, page, size, orderBy, orderAsc);
     }
 
     private Pagination<DepartmentModel> getAllLocations(Integer page, Integer size, String orderBy, boolean orderAsc){
         List<DepartmentModel> departmentModels = new ArrayList<>(locationPersistencePort.getAllDepartments());
-        List<DepartmentModel> orderDepartmentModelList;
 
-        if (orderBy.equalsIgnoreCase("city")){
-            if (orderAsc) {
-                orderDepartmentModelList = departmentModels.stream()
-                        .sorted(Comparator.comparing(department -> department.getCity().getName())).toList();
-            } else {
-                orderDepartmentModelList = departmentModels.stream()
-                        .sorted(Comparator.comparing((DepartmentModel department) -> department.getCity().getName()).reversed())
-                        .toList();
-            }
-        } else if (orderBy.equalsIgnoreCase("department")){
-            orderDepartmentModelList = orderByDepartment(departmentModels, orderAsc);
-        } else {
-            throw new LocationOrderNotFoundException();
-        }
-        List<DepartmentModel> pageContent = paginationContent(orderDepartmentModelList, page, size);
+        List<DepartmentModel> pageContent = paginationContent(orderList(departmentModels, orderBy, orderAsc), page, size);
 
         return new Pagination<>(pageContent, page, size, departmentModels.size());
     }
 
-    private Pagination<DepartmentModel> getLocationsByNameLocation(String nameLocation, Integer page, Integer size, boolean orderAsc){
+    private Pagination<DepartmentModel> getLocationsByNameLocation(String nameLocation, Integer page, Integer size, String orderBy, boolean orderAsc){
 
         List<DepartmentModel> locationListFound;
         if (locationPersistencePort.findCityByName(nameLocation.toUpperCase()).isPresent()){
             locationListFound = new ArrayList<>(locationPersistencePort.findAllByCityName(nameLocation));
         } else if (locationPersistencePort.findDepartmentByName(nameLocation.toUpperCase()).isPresent()){
-            locationListFound = List.of(Objects.requireNonNull(locationPersistencePort.findDepartmentByName(nameLocation).orElse(null)));
+            locationListFound = List.of(Objects.requireNonNull(locationPersistencePort.findDepartmentByName(nameLocation.toUpperCase()).orElse(null)));
         } else {
             throw new LocationNotFoundException();
         }
 
-        List<DepartmentModel> orderLocationListFound = orderByDepartment(locationListFound, orderAsc);
+        List<DepartmentModel> orderLocationListFound = orderList(locationListFound, orderBy, orderAsc);
 
         List<DepartmentModel> pageContent = paginationContent(orderLocationListFound, page, size);
 
@@ -94,18 +80,33 @@ public class LocationUseCase implements ILocationServicePort {
         return departmentModelList.subList(fromIndex, toIndex);
     }
 
-    private List<DepartmentModel> orderByDepartment(List<DepartmentModel> departmentModelList, boolean orderAsc){
+    private List<DepartmentModel> orderList(List<DepartmentModel> departmentModelList, String orderBy, boolean orderAsc){
 
-        if (departmentModelList.size() == 1){
+        if (orderBy.equalsIgnoreCase("city")){
+            List<DepartmentModel> orderDepartmentModelList;
+
+            if (orderAsc) {
+                orderDepartmentModelList = departmentModelList.stream()
+                        .sorted(Comparator.comparing(department -> department.getCity().getName())).toList();
+            } else {
+                orderDepartmentModelList = departmentModelList.stream()
+                        .sorted(Comparator.comparing((DepartmentModel department) -> department.getCity().getName()).reversed())
+                        .toList();
+            }
+            return orderDepartmentModelList;
+        } else if (orderBy.equalsIgnoreCase("department")){
+            if (departmentModelList.size() == 1){
+                return departmentModelList;
+            }
+
+            if (orderAsc) {
+                departmentModelList.sort(Comparator.comparing(DepartmentModel::getName));
+            } else {
+                departmentModelList.sort(Comparator.comparing(DepartmentModel::getName).reversed());
+            }
             return departmentModelList;
-        }
-
-        if (orderAsc) {
-            departmentModelList.sort(Comparator.comparing(DepartmentModel::getName));
         } else {
-            departmentModelList.sort(Comparator.comparing(DepartmentModel::getName).reversed());
+            throw new LocationOrderNotFoundException();
         }
-
-        return departmentModelList;
     }
 }
