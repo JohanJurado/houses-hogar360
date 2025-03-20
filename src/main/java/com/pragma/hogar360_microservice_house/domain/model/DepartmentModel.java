@@ -17,6 +17,12 @@ public class DepartmentModel {
         // Empty constructor to validate with setters
     }
 
+    public DepartmentModel(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
     public Long getId() {
         return id;
     }
@@ -30,8 +36,6 @@ public class DepartmentModel {
     }
 
     public void setName(String name) {
-        Validations.validationByAttributeIsNullOrBlank(name, new LocationDepartmentNameCannotBeEmptyException());
-        Validations.validationByLimitCharacters(name, DomainConstants.MAX_NAME_SIZE_LOCATION, new LocationNameMaxSizeExceedException());
         this.name = name;
     }
 
@@ -40,8 +44,6 @@ public class DepartmentModel {
     }
 
     public void setDescription(String description) {
-        Validations.validationByAttributeIsNullOrBlank(description, new LocationDepartmentDescriptionCannotBeEmptyException());
-        Validations.validationByLimitCharacters(description, DomainConstants.MAX_DESCRIPTION_SIZE_LOCATION, new LocationDescriptionMaxSizeExceedException());
         this.description = description;
     }
 
