@@ -14,10 +14,10 @@ public class Validations {
         }
     }
 
-    public static void validationByAttributeIsNullOrBlank(String attribute, String messageException){
+    public static void validationByAttributeIsNullOrBlank(String attribute, RuntimeException ex){
         attribute = Objects.requireNonNullElse(attribute, "");
         if (attribute.isBlank()){
-            throw new NullPointerException(messageException);
+            throw ex;
         }
     }
 }

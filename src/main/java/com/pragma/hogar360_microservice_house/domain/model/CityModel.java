@@ -1,5 +1,7 @@
 package com.pragma.hogar360_microservice_house.domain.model;
 
+import com.pragma.hogar360_microservice_house.domain.exceptions.LocationCityDescriptionCannotBeEmptyException;
+import com.pragma.hogar360_microservice_house.domain.exceptions.LocationCityNameCannotBeEmptyException;
 import com.pragma.hogar360_microservice_house.domain.exceptions.LocationDescriptionMaxSizeExceedException;
 import com.pragma.hogar360_microservice_house.domain.exceptions.LocationNameMaxSizeExceedException;
 import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
@@ -11,8 +13,16 @@ public class CityModel {
     private String name;
     private String description;
 
+    private DepartmentModel departmentModel;
+
     public CityModel() {
-        // Empty constructor to validate with setters
+    }
+
+    public CityModel(Long id, String name, String description, DepartmentModel departmentModel) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.departmentModel = departmentModel;
     }
 
     public Long getId() {
@@ -28,7 +38,7 @@ public class CityModel {
     }
 
     public void setName(String name) {
-        Validations.validationByAttributeIsNullOrBlank(name, DomainConstants.FIELD_NAME_NULL_MESSAGE);
+        Validations.validationByAttributeIsNullOrBlank(name, new LocationCityNameCannotBeEmptyException());
         Validations.validationByLimitCharacters(name, DomainConstants.MAX_NAME_SIZE_LOCATION, new LocationNameMaxSizeExceedException());
         this.name = name;
     }
@@ -38,8 +48,16 @@ public class CityModel {
     }
 
     public void setDescription(String description) {
-        Validations.validationByAttributeIsNullOrBlank(description, DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE);
+        Validations.validationByAttributeIsNullOrBlank(description, new LocationCityDescriptionCannotBeEmptyException());
         Validations.validationByLimitCharacters(description, DomainConstants.MAX_DESCRIPTION_SIZE_LOCATION, new LocationDescriptionMaxSizeExceedException());
         this.description = description;
+    }
+
+    public DepartmentModel getCity() {
+        return departmentModel;
+    }
+
+    public void setCity(DepartmentModel departmentModel) {
+        this.departmentModel = departmentModel;
     }
 }

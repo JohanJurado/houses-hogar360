@@ -6,5 +6,5 @@ import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 
 public interface ILocationServicePort {
     void save(CityModel city, DepartmentModel departmentModel);
-    Pagination<DepartmentModel> getLocations(String nameLocation, Integer page, Integer size, String orderBy, boolean orderAsc);
+    Pagination<CityModel> getLocations(String nameLocation, Integer page, Integer size, String orderBy, boolean orderAsc);
 }

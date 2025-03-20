@@ -5,6 +5,7 @@ import com.pragma.hogar360_microservice_house.application.dtos.response.Category
 import com.pragma.hogar360_microservice_house.application.dtos.response.SaveDtoResponses;
 import com.pragma.hogar360_microservice_house.application.services.ICategoryService;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
+import com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -69,10 +70,10 @@ public class CategoryController {
     })
     @GetMapping("/")
     public ResponseEntity<Pagination<CategoryResponse>> getCategories(
-            @RequestParam(defaultValue = "") String nameCategory,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(defaultValue = "true") boolean orderAsc
+            @RequestParam(defaultValue = PaginationConstants.NAME_CATEGORY_DEFAULT_PAGINATION) String nameCategory,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_DEFAULT_PAGINATION) Integer page,
+            @RequestParam(defaultValue = PaginationConstants.SIZE_DEFAULT_PAGINATION) Integer size,
+            @RequestParam(defaultValue = PaginationConstants.ORDER_ASC_DEFAULT_PAGINATION) boolean orderAsc
     ){
         Pagination<CategoryResponse> response = categoryService.getCategories(nameCategory, page, size, orderAsc);
         return ResponseEntity.status(HttpStatus.OK).body(response);
