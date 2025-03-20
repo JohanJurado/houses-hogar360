@@ -26,6 +26,9 @@ public class CategoryUseCase implements ICategoryServicePort {
         if (categoryPersistencePort.findByName(categoryModel.getName()).isPresent()){
             throw new CategoryAlreadyExistsException();
         }
+
+        categoryModel.setName(categoryModel.getName().toUpperCase());
+        categoryModel.setDescription(categoryModel.getDescription().toUpperCase());
         categoryPersistencePort.save(categoryModel);
     }
 

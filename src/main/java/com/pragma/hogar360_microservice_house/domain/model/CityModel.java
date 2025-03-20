@@ -5,8 +5,6 @@ import com.pragma.hogar360_microservice_house.domain.exceptions.LocationNameMaxS
 import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
 import com.pragma.hogar360_microservice_house.domain.util.validations.Validations;
 
-import java.util.List;
-
 public class CityModel {
 
     private Long id;
