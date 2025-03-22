@@ -1,14 +1,13 @@
 package com.pragma.hogar360_microservice_house.domain.usecases;
 
-import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryNotFoundException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryDescriptionMaxSizeExceedException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryNameMaxSizeExceedException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.CategoryAlreadyExistsException;
+import com.pragma.hogar360_microservice_house.domain.exceptions.*;
 import com.pragma.hogar360_microservice_house.domain.model.CategoryModel;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ICategoryPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
+import com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants;
+import com.pragma.hogar360_microservice_house.domain.util.validations.Validations;
+import com.pragma.hogar360_microservice_house.utils.TestConstants;
 import com.pragma.hogar360_microservice_house.utils.TestDataCategory;
-import com.pragma.hogar360_microservice_house.domain.exceptions.PageNotFoundException;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,11 +17,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,7 +38,7 @@ class CategoryUseCaseTest {
     void checkWhenCategorySavedCorrectly(){
         CategoryModel categoryIn = TestDataCategory.getCategory();
 
-        Mockito.when(categoryPersistencePort.findByName(categoryIn.getName()))
+        Mockito.when(categoryPersistencePort.findByName(categoryIn.getName().toUpperCase()))
                     .thenReturn(Optional.empty());
 
         categoryUseCase.save(categoryIn);
@@ -54,7 +54,7 @@ class CategoryUseCaseTest {
     void checkWhenCategoryAlreadyExists(){
         CategoryModel categoryIn = TestDataCategory.getCategory();
 
-        Mockito.when(categoryPersistencePort.findByName(categoryIn.getName()))
+        Mockito.when(categoryPersistencePort.findByName(categoryIn.getName().toUpperCase()))
                 .thenReturn(Optional.of(categoryIn));
 
         assertThrows(
@@ -71,10 +71,12 @@ class CategoryUseCaseTest {
     @Test
     @DisplayName("Show NameMaxSizeException when the name exceed 50 characters")
     void checkWhenCategoryNameMaxExceed(){
+        CategoryModel categoryIn = TestDataCategory.getCategoryMaxName();
+
         assertThrows(
                 CategoryNameMaxSizeExceedException.class,
-                TestDataCategory::getCategoryMaxName,
-                "Expected save to throw NameMaxSizeException, but it didn't"
+                () -> categoryUseCase.save(categoryIn),
+                "Expected save to throw CategoryNameMaxSizeExceedException, but it didn't"
         );
         verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
     }
@@ -82,59 +84,65 @@ class CategoryUseCaseTest {
     @Test
     @DisplayName("Show DescriptionMaxSizeException when the description exceed 90 characters")
     void checkWhenCategoryDescriptionMaxExceed(){
+        CategoryModel categoryIn = TestDataCategory.getCategoryMaxDescription();
+
         assertThrows(
                 CategoryDescriptionMaxSizeExceedException.class,
-                TestDataCategory::getCategoryMaxDescription,
-                "Expected save to throw DescriptionMaxSizeException, but it didn't"
+                () -> categoryUseCase.save(categoryIn),
+                "Expected save to throw CategoryDescriptionMaxSizeExceedException, but it didn't"
         );
         verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
     }
 
     @Test
-    @DisplayName("Show NullPointerException when the name is null")
+    @DisplayName("Show CategoryNameCannotBeEmptyException when the name is null")
     void checkWhenCategoryNameIsNull(){
-        Exception e = assertThrows(
-                NullPointerException.class,
-                TestDataCategory::getCategoryNameNull,
-                "Expected save to throw NullPointerException, but it didn't"
+        CategoryModel categoryIn = TestDataCategory.getCategoryNameNull();
+
+        assertThrows(
+                CategoryNameCannotBeEmptyException.class,
+                () -> categoryUseCase.save(categoryIn),
+                "Expected save to throw CategoryNameCannotBeEmptyException, but it didn't"
         );
-        assertEquals(DomainConstants.FIELD_NAME_NULL_MESSAGE, e.getMessage());
         verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
     }
 
     @Test
-    @DisplayName("Show NullPointerException when the description is null")
+    @DisplayName("Show CategoryDescriptionCannotBeEmptyException when the description is null")
     void checkWhenCategoryDescriptionIsNull(){
-        Exception e = assertThrows(
-                NullPointerException.class,
-                TestDataCategory::getCategoryDescriptionNull,
-                "Expected save to throw NullPointerException, but it didn't"
+        CategoryModel categoryIn = TestDataCategory.getCategoryDescriptionNull();
+
+        assertThrows(
+                CategoryDescriptionCannotBeEmptyException.class,
+                () -> categoryUseCase.save(categoryIn),
+                "Expected save to throw CategoryDescriptionCannotBeEmptyException, but it didn't"
         );
-        assertEquals(DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE, e.getMessage());
         verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
     }
 
     @Test
-    @DisplayName("Show NullPointerException when the name is blank")
+    @DisplayName("Show CategoryNameCannotBeEmptyException when the name is blank")
     void checkWhenCategoryNameIsBlank(){
-        Exception e = assertThrows(
-                NullPointerException.class,
-                TestDataCategory::getCategoryNameBlank,
-                "Expected save to throw NullPointerException, but it didn't"
+        CategoryModel categoryIn = TestDataCategory.getCategoryNameBlank();
+
+        assertThrows(
+                CategoryNameCannotBeEmptyException.class,
+                () -> categoryUseCase.save(categoryIn),
+                "Expected save to throw CategoryNameCannotBeEmptyException, but it didn't"
         );
-        assertEquals(DomainConstants.FIELD_NAME_NULL_MESSAGE, e.getMessage());
         verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
     }
 
     @Test
-    @DisplayName("Show NullPointerException when the description is blank")
+    @DisplayName("Show CategoryDescriptionCannotBeEmptyException when the description is blank")
     void checkWhenCategoryDescriptionIsBlank(){
-        Exception e = assertThrows(
-                NullPointerException.class,
-                TestDataCategory::getCategoryDescriptionBlank,
-                "Expected save to throw NullPointerException, but it didn't"
+        CategoryModel categoryIn = TestDataCategory.getCategoryDescriptionBlank();
+
+        assertThrows(
+                CategoryDescriptionCannotBeEmptyException.class,
+                () -> categoryUseCase.save(categoryIn),
+                "Expected save to throw CategoryDescriptionCannotBeEmptyException, but it didn't"
         );
-        assertEquals(DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE, e.getMessage());
         verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
     }
 
@@ -159,6 +167,54 @@ class CategoryUseCaseTest {
         assertEquals(categoryModelList.size(), response.getTotalElements());
 
         verify(categoryPersistencePort, times(1)).getAllCategories();
+    }
+
+    @Test
+    @DisplayName("Test Validation Constructor ThrowsIllegalStateException")
+    void testValidationConstructorThrowsIllegalStateException() {
+        Exception exception = assertThrows(InvocationTargetException.class, () -> {
+            Constructor<Validations> constructor = Validations.class.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            constructor.newInstance();
+        });
+
+        Throwable cause = exception.getCause();
+        assertNotNull(cause, "La causa de la excepción no debe ser nula.");
+        assertEquals(IllegalStateException.class, cause.getClass(), "La causa debe ser IllegalStateException.");
+
+        assertEquals(DomainConstants.UTILITY_CLASS_MESSAGE, cause.getMessage(), "El mensaje de la excepción no coincide.");
+    }
+
+    @Test
+    @DisplayName("Test PaginationConstants Constructor ThrowsIllegalStateException")
+    void testPaginationConstantsConstructorThrowsIllegalStateException() {
+        Exception exception = assertThrows(InvocationTargetException.class, () -> {
+            Constructor<PaginationConstants> constructor = PaginationConstants.class.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            constructor.newInstance();
+        });
+
+        Throwable cause = exception.getCause();
+        assertNotNull(cause, "La causa de la excepción no debe ser nula.");
+        assertEquals(IllegalStateException.class, cause.getClass(), "La causa debe ser IllegalStateException.");
+
+        assertEquals(DomainConstants.UTILITY_CLASS_MESSAGE, cause.getMessage(), "El mensaje de la excepción no coincide.");
+    }
+
+    @Test
+    @DisplayName("Test DomainConstants Constructor ThrowsIllegalStateException")
+    void testDomainConstantsConstructorThrowsIllegalStateException() {
+        Exception exception = assertThrows(InvocationTargetException.class, () -> {
+            Constructor<DomainConstants> constructor = DomainConstants.class.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            constructor.newInstance();
+        });
+
+        Throwable cause = exception.getCause();
+        assertNotNull(cause, "La causa de la excepción no debe ser nula.");
+        assertEquals(IllegalStateException.class, cause.getClass(), "La causa debe ser IllegalStateException.");
+
+        assertEquals(DomainConstants.UTILITY_CLASS_MESSAGE, cause.getMessage(), "El mensaje de la excepción no coincide.");
     }
 
     @Test
@@ -248,7 +304,7 @@ class CategoryUseCaseTest {
         verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
 
     }
-    // checkWhenNameCategoryIsNotBlankAndPageNotFound
+
     @Test
     @DisplayName("Show PageNotFound when the page is not among the possible generated pages and name category is present")
     void checkWhenNameCategoryIsNotBlankAndPageNotFound(){

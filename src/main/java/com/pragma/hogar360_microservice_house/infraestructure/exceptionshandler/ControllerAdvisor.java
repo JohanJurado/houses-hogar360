@@ -38,11 +38,6 @@ public class ControllerAdvisor {
         );
     }
 
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<ExceptionResponse> nullPointerException(NullPointerException exception){
-        return ResponseEntity.badRequest().body(new ExceptionResponse(exception.getMessage(), LocalDateTime.now()));
-    }
-
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<ExceptionResponse> categoryNotFoundException(CategoryNotFoundException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -62,7 +57,7 @@ public class ControllerAdvisor {
     @ExceptionHandler(LocationAlreadyExistsException.class)
     public ResponseEntity<ExceptionResponse> departmentAlreadyExistsException(LocationAlreadyExistsException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ExceptionResponse(ExceptionConstants.DEPARTMENT_EXIST_MESSAGE, LocalDateTime.now()
+                new ExceptionResponse(ExceptionConstants.LOCATION_EXIST_MESSAGE, LocalDateTime.now()
                 )
         );
     }
@@ -95,6 +90,54 @@ public class ControllerAdvisor {
     public ResponseEntity<ExceptionResponse> locationOrderNotFoundException(LocationOrderNotFoundException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ExceptionResponse(ExceptionConstants.LOCATION_ORDER_NOT_FOUND_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(CategoryNameCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> categoryNameCannotBeEmptyException(CategoryNameCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.CATEGORY_NAME_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(CategoryDescriptionCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> categoryDescriptionCannotBeEmptyException(CategoryDescriptionCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.CATEGORY_DESCRIPTION_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(LocationCityNameCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> locationCityNameCannotBeEmptyException(LocationCityNameCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_CITY_NAME_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(LocationCityDescriptionCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> locationCityDescriptionCannotBeEmptyException(LocationCityDescriptionCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_CITY_DESCRIPTION_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(LocationDepartmentNameCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> locationDepartmentNameCannotBeEmptyException(LocationDepartmentNameCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_DEPARTMENT_NAME_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(LocationDepartmentDescriptionCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> locationDepartmentDescriptionCannotBeEmptyException(LocationDepartmentDescriptionCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_DEPARTMENT_DESCRIPTION_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
                 )
         );
     }

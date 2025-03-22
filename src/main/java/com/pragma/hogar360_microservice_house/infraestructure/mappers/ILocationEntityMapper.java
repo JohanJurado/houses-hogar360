@@ -13,29 +13,35 @@ import java.util.Optional;
 @Mapper(componentModel = "spring")
 public interface ILocationEntityMapper {
 
-    CityModel entityToModelCity(CityEntity cityEntity);
-    default Optional<CityModel> entityOptionalToModelOptionalCity(Optional<CityEntity> cityEntity){
-        return cityEntity.map(this::entityToModelCity);
+    DepartmentModel entityToModelDepartment(DepartmentEntity departmentEntity);
+    default Optional<DepartmentModel> entityOptionalToModelOptionalDepartment(Optional<DepartmentEntity> departmentEntity){
+        return departmentEntity.map(this::entityToModelDepartment);
     }
-    CityEntity modelToEntityCity(CityModel cityModel);
-    default List<CityModel> entityListToModelListCity(List<CityEntity> cityEntity){
-        return cityEntity.stream()
-                .map(this::entityToModelCity)
+    DepartmentEntity modelToEntityDepartment(DepartmentModel departmentModel);
+    default List<DepartmentModel> entityListToModelListDepartment(List<DepartmentEntity> departmentEntityList){
+        return departmentEntityList.stream()
+                .map(this::entityToModelDepartment)
                 .toList();
     }
 
     @Mapping(target = "id", source="id")
     @Mapping(target = "name", source="name")
     @Mapping(target = "description", source="description")
-    @Mapping(target = "city", source="city")
-    DepartmentModel entityToModelDepartment(DepartmentEntity departmentEntity);
+    @Mapping(target = "departmentModel", source="departmentEntity")
+    CityModel entityToModelCity(CityEntity cityEntity);
 
-    default Optional<DepartmentModel> entityOptionalToModelOptionalDepartment(Optional<DepartmentEntity> departmentEntity){
-        return departmentEntity.map(this::entityToModelDepartment);
+    default Optional<CityModel> entityOptionalToModelOptionalCity(Optional<CityEntity> cityEntity){
+        return cityEntity.map(this::entityToModelCity);
     }
     @Mapping(target = "id", source="id")
     @Mapping(target = "name", source="name")
     @Mapping(target = "description", source="description")
-    @Mapping(target = "city", source="city")
-    DepartmentEntity modelToEntityDepartment(DepartmentModel departmentModel);
+    @Mapping(target = "departmentEntity", source="departmentModel")
+    CityEntity modelToEntityCity(CityModel cityModel);
+
+    default List<CityModel> entityListToModelListCity(List<CityEntity> cityEntityList){
+        return cityEntityList.stream()
+                .map(this::entityToModelCity)
+                .toList();
+    }
 }

@@ -5,6 +5,7 @@ import com.pragma.hogar360_microservice_house.domain.model.CityModel;
 import com.pragma.hogar360_microservice_house.domain.model.DepartmentModel;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
+import com.pragma.hogar360_microservice_house.utils.TestConstants;
 import com.pragma.hogar360_microservice_house.utils.TestDataCategory;
 import com.pragma.hogar360_microservice_house.utils.TestDataLocation;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,47 +38,47 @@ class LocationUseCaseTest {
         CityModel cityIn = TestDataLocation.getCityModel();
         DepartmentModel departmentIn = TestDataLocation.getDepartmentModel();
 
-        Mockito.when(locationPersistencePort.findDepartmentByName(departmentIn.getName()))
+        Mockito.when(locationPersistencePort.findDepartmentByName(departmentIn.getName().toUpperCase()))
                 .thenReturn(Optional.empty());
 
-        Mockito.when(locationPersistencePort.findCityByName(cityIn.getName()))
+        Mockito.when(locationPersistencePort.findCityByName(cityIn.getName().toUpperCase()))
                 .thenReturn(Optional.empty());
 
         locationUseCase.save(cityIn, departmentIn);
 
         verify(locationPersistencePort,
-                times(1)).findDepartmentByName(departmentIn.getName());
+                times(TestConstants.VERIFY_ONE_INVOCATIONS)).findDepartmentByName(departmentIn.getName());
         verify(locationPersistencePort,
-                times(1)).saveDepartment(departmentIn);
+                times(TestConstants.VERIFY_ONE_INVOCATIONS)).saveDepartment(departmentIn);
 
         verify(locationPersistencePort,
-                times(1)).findCityByName(cityIn.getName());
+                times(TestConstants.VERIFY_ONE_INVOCATIONS)).findCityByName(cityIn.getName());
         verify(locationPersistencePort,
-                times(1)).saveCity(cityIn);
+                times(TestConstants.VERIFY_ONE_INVOCATIONS)).saveCity(cityIn);
     }
 
     @Test
-    @DisplayName("Create location (only department)")
+    @DisplayName("Create location (only city)")
     void checkWhenOnlyDepartmentSavedCorrectly(){
         CityModel cityIn = TestDataLocation.getCityModel();
         DepartmentModel departmentIn = TestDataLocation.getDepartmentModel();
 
-        Mockito.when(locationPersistencePort.findDepartmentByName(departmentIn.getName()))
-                .thenReturn(Optional.empty());
+        Mockito.when(locationPersistencePort.findDepartmentByName(departmentIn.getName().toUpperCase()))
+                .thenReturn(Optional.of(departmentIn));
 
-        Mockito.when(locationPersistencePort.findCityByName(cityIn.getName()))
-                .thenReturn(Optional.of(cityIn));
+        Mockito.when(locationPersistencePort.findCityByName(cityIn.getName().toUpperCase()))
+                .thenReturn(Optional.empty());
 
         locationUseCase.save(cityIn, departmentIn);
 
         verify(locationPersistencePort,
-                times(1)).findDepartmentByName(departmentIn.getName());
+                times(TestConstants.VERIFY_ONE_INVOCATIONS)).findDepartmentByName(departmentIn.getName());
         verify(locationPersistencePort,
-                times(1)).saveDepartment(departmentIn);
+                times(TestConstants.VERIFY_ONE_INVOCATIONS)).saveCity(cityIn);
 
         verify(locationPersistencePort,
-                times(1)).findCityByName(cityIn.getName());
-        verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
+                times(TestConstants.VERIFY_ONE_INVOCATIONS)).findCityByName(cityIn.getName());
+        verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
     }
 
     @Test
@@ -87,8 +87,11 @@ class LocationUseCaseTest {
         CityModel cityIn = TestDataLocation.getCityModel();
         DepartmentModel departmentIn = TestDataLocation.getDepartmentModel();
 
-        Mockito.when(locationPersistencePort.findDepartmentByName(departmentIn.getName()))
+        Mockito.when(locationPersistencePort.findDepartmentByName(departmentIn.getName().toUpperCase()))
                 .thenReturn(Optional.of(departmentIn));
+
+        Mockito.when(locationPersistencePort.findCityByName(cityIn.getName().toUpperCase()))
+                .thenReturn(Optional.of(cityIn));
 
         assertThrows(
                 LocationAlreadyExistsException.class,
@@ -97,19 +100,22 @@ class LocationUseCaseTest {
         );
 
         verify(locationPersistencePort,
-                times(1)).findDepartmentByName(departmentIn.getName());
+                times(TestConstants.VERIFY_ONE_INVOCATIONS)).findDepartmentByName(departmentIn.getName());
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
-        verify(locationPersistencePort, never()).findCityByName(any(String.class));
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).findCityByName(cityIn.getName().toUpperCase());
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
     }
 
     @Test
     @DisplayName("Show LocationNameMaxSizeExceedException when the name of city exceed 50 characters")
     void showLocationNameMaxSizeExceedExceptionWhenCityNameExceed(){
+        CityModel cityIn = TestDataLocation.getCityModelMaxName();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentModel();
+
         assertThrows(
                 LocationNameMaxSizeExceedException.class,
-                TestDataLocation::getCityModelMaxName,
-                "Expected save to throw LocationNameMaxSizeException, but it didn't"
+                () -> locationUseCase.save(cityIn, departmentIn),
+                "Expected save to throw LocationNameMaxSizeExceedException, but it didn't"
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
@@ -118,10 +124,13 @@ class LocationUseCaseTest {
     @Test
     @DisplayName("Show LocationNameMaxSizeExceedException when the name of department exceed 50 characters")
     void showLocationNameMaxSizeExceedExceptionWhenDepartmentNameExceed(){
+        CityModel cityIn = TestDataLocation.getCityModel();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentModelMaxName();
+
         assertThrows(
                 LocationNameMaxSizeExceedException.class,
-                TestDataLocation::getDepartmentModelMaxName,
-                "Expected save to throw LocationNameMaxSizeException, but it didn't"
+                () -> locationUseCase.save(cityIn, departmentIn),
+                "Expected save to throw LocationNameMaxSizeExceedException, but it didn't"
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
@@ -130,11 +139,15 @@ class LocationUseCaseTest {
     @Test
     @DisplayName("Show LocationDescriptionMaxSizeExceedException when the description of city exceed 120 characters")
     void showLocationDescriptionMaxSizeExceedExceptionWhenCityDescriptionExceed(){
+        CityModel cityIn = TestDataLocation.getCityModelMaxDescription();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentModel();
+
         assertThrows(
                 LocationDescriptionMaxSizeExceedException.class,
-                TestDataLocation::getCityModelMaxDescription,
+                () -> locationUseCase.save(cityIn, departmentIn),
                 "Expected save to throw LocationDescriptionMaxSizeExceedException, but it didn't"
         );
+
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
     }
@@ -142,9 +155,12 @@ class LocationUseCaseTest {
     @Test
     @DisplayName("Show LocationDescriptionMaxSizeExceedException when the description of department exceed 120 characters")
     void showLocationDescriptionMaxSizeExceedExceptionWhenDepartmentDescriptionExceed(){
+        CityModel cityIn = TestDataLocation.getCityModel();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentModelMaxDescription();
+
         assertThrows(
                 LocationDescriptionMaxSizeExceedException.class,
-                TestDataLocation::getDepartmentModelMaxDescription,
+                () -> locationUseCase.save(cityIn, departmentIn),
                 "Expected save to throw LocationDescriptionMaxSizeExceedException, but it didn't"
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
@@ -152,96 +168,120 @@ class LocationUseCaseTest {
     }
 
     @Test
-    @DisplayName("show NullPointerException when name city is null")
-    void showNullPointerExceptionWhenNameCityIsNull(){
+    @DisplayName("show LocationCityNameCannotBeEmptyException when name city is null")
+    void showLocationCityNameCannotBeEmptyExceptionWhenNameCityIsNull(){
+        CityModel cityIn = TestDataLocation.getCityNameNull();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentModel();
+
         assertThrows(
-                NullPointerException.class,
-                TestDataLocation::getCityNameNull,
-                "Expected save to throw NullPointerException, but it didn't"
+                LocationCityNameCannotBeEmptyException.class,
+                () -> locationUseCase.save(cityIn, departmentIn),
+                "Expected save to throw LocationCityNameCannotBeEmptyException, but it didn't"
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
     }
 
     @Test
-    @DisplayName("show NullPointerException when name department is null")
-    void showNullPointerExceptionWhenNameDepartmentIsNull(){
+    @DisplayName("show LocationDepartmentNameCannotBeEmptyException when name department is null")
+    void showLocationDepartmentNameCannotBeEmptyExceptionWhenNameDepartmentIsNull(){
+        CityModel cityIn = TestDataLocation.getCityModel();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentNameNull();
+
         assertThrows(
-                NullPointerException.class,
-                TestDataLocation::getDepartmentNameNull,
-                "Expected save to throw NullPointerException, but it didn't"
+                LocationDepartmentNameCannotBeEmptyException.class,
+                () -> locationUseCase.save(cityIn, departmentIn),
+                "Expected save to throw LocationDepartmentNameCannotBeEmptyException, but it didn't"
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
     }
 
     @Test
-    @DisplayName("show NullPointerException when name city is blank")
-    void showNullPointerExceptionWhenNameCityIsBlank(){
+    @DisplayName("show LocationCityNameCannotBeEmptyException when name city is blank")
+    void showLocationCityNameCannotBeEmptyExceptionWhenNameCityIsBlank(){
+        CityModel cityIn = TestDataLocation.getCityNameBlank();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentModel();
+
         assertThrows(
-                NullPointerException.class,
-                TestDataLocation::getCityNameBlank,
-                "Expected save to throw NullPointerException, but it didn't"
+                LocationCityNameCannotBeEmptyException.class,
+                () -> locationUseCase.save(cityIn, departmentIn),
+                "Expected save to throw LocationCityNameCannotBeEmptyException, but it didn't"
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
     }
 
     @Test
-    @DisplayName("show NullPointerException when name department is blank")
-    void showNullPointerExceptionWhenNameDepartmentIsBlank(){
+    @DisplayName("show LocationDepartmentNameCannotBeEmptyException when name department is blank")
+    void showLocationDepartmentNameCannotBeEmptyExceptionWhenNameDepartmentIsBlank(){
+        CityModel cityIn = TestDataLocation.getCityModel();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentNameBlank();
+
         assertThrows(
-                NullPointerException.class,
-                TestDataLocation::getDepartmentNameBlank,
-                "Expected save to throw NullPointerException, but it didn't"
+                LocationDepartmentNameCannotBeEmptyException.class,
+                () -> locationUseCase.save(cityIn, departmentIn),
+                "Expected save to throw LocationCityNameCannotBeEmptyException, but it didn't"
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
     }
 
     @Test
-    @DisplayName("show NullPointerException when description city is null")
-    void showNullPointerExceptionWhenDescriptionCityIsNull(){
+    @DisplayName("show LocationCityDescriptionCannotBeEmptyException when description city is null")
+    void showLocationCityDescriptionCannotBeEmptyExceptionWhenDescriptionCityIsNull(){
+        CityModel cityIn = TestDataLocation.getCityDescriptionNull();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentModel();
+
         assertThrows(
-                NullPointerException.class,
-                TestDataLocation::getCityDescriptionNull,
-                "Expected save to throw NullPointerException, but it didn't"
+                LocationCityDescriptionCannotBeEmptyException.class,
+                () -> locationUseCase.save(cityIn, departmentIn),
+                "Expected save to throw LocationCityDescriptionCannotBeEmptyException, but it didn't"
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
     }
 
     @Test
-    @DisplayName("show NullPointerException when description department is null")
-    void showNullPointerExceptionWhenDescriptionDepartmentIsNull(){
+    @DisplayName("show LocationDepartmentDescriptionCannotBeEmptyException when description department is null")
+    void showLocationDepartmentDescriptionCannotBeEmptyExceptionWhenDescriptionDepartmentIsNull(){
+        CityModel cityIn = TestDataLocation.getCityModel();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentDescriptionNull();
+
         assertThrows(
-                NullPointerException.class,
-                TestDataLocation::getDepartmentDescriptionNull,
-                "Expected save to throw NullPointerException, but it didn't"
+                LocationDepartmentDescriptionCannotBeEmptyException.class,
+                () -> locationUseCase.save(cityIn, departmentIn),
+                "Expected save to throw LocationDepartmentDescriptionCannotBeEmptyException, but it didn't"
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
     }
 
     @Test
-    @DisplayName("show NullPointerException when description city is blank")
-    void showNullPointerExceptionWhenDescriptionCityIsBlank(){
+    @DisplayName("show LocationCityDescriptionCannotBeEmptyException when description city is blank")
+    void showLocationCityDescriptionCannotBeEmptyExceptionWhenDescriptionCityIsBlank(){
+        CityModel cityIn = TestDataLocation.getCityDescriptionBlank();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentModel();
+
         assertThrows(
-                NullPointerException.class,
-                TestDataLocation::getCityDescriptionBlank,
-                "Expected save to throw NullPointerException, but it didn't"
+                LocationCityDescriptionCannotBeEmptyException.class,
+                () -> locationUseCase.save(cityIn, departmentIn),
+                "Expected save to throw LocationCityDescriptionCannotBeEmptyException, but it didn't"
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
     }
 
     @Test
-    @DisplayName("show NullPointerException when description department is blank")
+    @DisplayName("show LocationDepartmentDescriptionCannotBeEmptyException when description department is blank")
     void showNullPointerExceptionWhenDescriptionDepartmentIsBlank(){
+        CityModel cityIn = TestDataLocation.getCityModel();
+        DepartmentModel departmentIn = TestDataLocation.getDepartmentDescriptionBlank();
+
         assertThrows(
-                NullPointerException.class,
-                TestDataLocation::getDepartmentDescriptionBlank,
-                "Expected save to throw NullPointerException, but it didn't"
+                LocationDepartmentDescriptionCannotBeEmptyException.class,
+                () -> locationUseCase.save(cityIn, departmentIn),
+                "Expected save to throw LocationDepartmentDescriptionCannotBeEmptyException, but it didn't"
         );
         verify(locationPersistencePort, never()).saveCity(any(CityModel.class));
         verify(locationPersistencePort, never()).saveDepartment(any(DepartmentModel.class));
@@ -257,16 +297,16 @@ class LocationUseCaseTest {
         String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
         boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
 
-        Mockito.when(locationPersistencePort.getAllDepartments())
+        Mockito.when(locationPersistencePort.getAllCities())
                 .thenReturn(TestDataLocation.getLocationsModels());
 
-        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+        Pagination<CityModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
 
         assertEquals(TestDataLocation.getLocationsModels().size(), response.getContent().size());
         assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
         assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
 
-        verify(locationPersistencePort, times(1)).getAllDepartments();
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).getAllCities();
     }
 
     @Test
@@ -278,16 +318,16 @@ class LocationUseCaseTest {
         String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
         boolean orderAsc = TestDataLocation.ORDER_DESC_PAGINATION;
 
-        Mockito.when(locationPersistencePort.getAllDepartments())
+        Mockito.when(locationPersistencePort.getAllCities())
                 .thenReturn(TestDataLocation.getLocationsModels());
 
-        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+        Pagination<CityModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
 
         assertEquals(TestDataLocation.getLocationsModels().size(), response.getContent().size());
         assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
         assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
 
-        verify(locationPersistencePort, times(1)).getAllDepartments();
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).getAllCities();
     }
 
     @Test
@@ -299,7 +339,7 @@ class LocationUseCaseTest {
         String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
         boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
 
-        Mockito.when(locationPersistencePort.getAllDepartments())
+        Mockito.when(locationPersistencePort.getAllCities())
                 .thenReturn(TestDataLocation.getLocationsModels());
 
         assertThrows(
@@ -318,16 +358,16 @@ class LocationUseCaseTest {
         String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
         boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
 
-        Mockito.when(locationPersistencePort.getAllDepartments())
+        Mockito.when(locationPersistencePort.getAllCities())
                 .thenReturn(TestDataLocation.getLocationsModelsSize1());
 
-        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+        Pagination<CityModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
 
         assertEquals(TestDataLocation.getLocationsModelsSize1().size(), response.getContent().size());
         assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
         assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
 
-        verify(locationPersistencePort, times(1)).getAllDepartments();
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).getAllCities();
     }
 
     @Test
@@ -339,16 +379,16 @@ class LocationUseCaseTest {
         String orderBy = TestDataLocation.ORDER_BY_DEPARTMENT_PAGINATION;
         boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
 
-        Mockito.when(locationPersistencePort.getAllDepartments())
+        Mockito.when(locationPersistencePort.getAllCities())
                 .thenReturn(TestDataLocation.getLocationsModels());
 
-        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+        Pagination<CityModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
 
         assertEquals(TestDataLocation.getLocationsModels().size(), response.getContent().size());
         assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
         assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
 
-        verify(locationPersistencePort, times(1)).getAllDepartments();
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).getAllCities();
     }
 
     @Test
@@ -360,16 +400,16 @@ class LocationUseCaseTest {
         String orderBy = TestDataLocation.ORDER_BY_DEPARTMENT_PAGINATION;
         boolean orderAsc = TestDataLocation.ORDER_DESC_PAGINATION;
 
-        Mockito.when(locationPersistencePort.getAllDepartments())
+        Mockito.when(locationPersistencePort.getAllCities())
                 .thenReturn(TestDataLocation.getLocationsModels());
 
-        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+        Pagination<CityModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
 
         assertEquals(TestDataLocation.getLocationsModels().size(), response.getContent().size());
         assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
         assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
 
-        verify(locationPersistencePort, times(1)).getAllDepartments();
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).getAllCities();
     }
 
     @Test
@@ -381,7 +421,7 @@ class LocationUseCaseTest {
         String orderBy = TestDataLocation.ORDER_BY_OTHER_PAGINATION;
         boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
 
-        Mockito.when(locationPersistencePort.getAllDepartments())
+        Mockito.when(locationPersistencePort.getAllCities())
                 .thenReturn(TestDataLocation.getLocationsModels());
 
         assertThrows(
@@ -400,20 +440,20 @@ class LocationUseCaseTest {
         String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
         boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
 
+        Mockito.when(locationPersistencePort.findDepartmentByName(nameLocation.toUpperCase()))
+                .thenReturn(Optional.empty());
+
         Mockito.when(locationPersistencePort.findCityByName(nameLocation.toUpperCase()))
                 .thenReturn(Optional.of(TestDataLocation.getCityModel()));
 
-        Mockito.when(locationPersistencePort.findAllByCityName(nameLocation))
-                .thenReturn(TestDataLocation.getLocationsModels());
+        Pagination<CityModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
 
-        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
-
-        assertEquals(TestDataLocation.getLocationsModels().size(), response.getContent().size());
+        assertEquals(TestDataLocation.getCityModel().getName(), response.getContent().getFirst().getName());
         assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
         assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
 
-        verify(locationPersistencePort, times(1)).findCityByName(nameLocation.toUpperCase());
-        verify(locationPersistencePort, times(1)).findAllByCityName(nameLocation);
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).findDepartmentByName(nameLocation.toUpperCase());
+        verify(locationPersistencePort, times(TestConstants.VERIFY_TWO_INVOCATIONS)).findCityByName(nameLocation.toUpperCase());
     }
 
     @Test
@@ -425,20 +465,21 @@ class LocationUseCaseTest {
         String orderBy = TestDataLocation.ORDER_BY_CITY_PAGINATION;
         boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
 
-        Mockito.when(locationPersistencePort.findCityByName(nameLocation.toUpperCase()))
-                .thenReturn(Optional.empty());
-
         Mockito.when(locationPersistencePort.findDepartmentByName(nameLocation.toUpperCase()))
                 .thenReturn(Optional.of(TestDataLocation.getDepartmentModel()));
 
-        Pagination<DepartmentModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+        Mockito.when(locationPersistencePort.findAllByDepartmentName(nameLocation.toUpperCase()))
+                .thenReturn(TestDataLocation.getLocationsModels());
 
-        assertEquals(List.of(TestDataLocation.getDepartmentModel()).size(), response.getContent().size());
+
+        Pagination<CityModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
+
+        assertEquals(TestDataLocation.getLocationsModels().size(), response.getContent().size());
         assertEquals(TestDataCategory.PAGE_PAGINATION, response.getPageNumber());
         assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
 
-        verify(locationPersistencePort, times(1)).findCityByName(nameLocation.toUpperCase());
-        verify(locationPersistencePort, times(2)).findDepartmentByName(nameLocation.toUpperCase());
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).findAllByDepartmentName(nameLocation.toUpperCase());
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).findDepartmentByName(nameLocation.toUpperCase());
     }
 
     @Test
@@ -462,7 +503,7 @@ class LocationUseCaseTest {
                 "Expected show LocationNotFoundException, but it didn't"
         );
 
-        verify(locationPersistencePort, times(1)).findCityByName(nameLocation.toUpperCase());
-        verify(locationPersistencePort, times(1)).findDepartmentByName(nameLocation.toUpperCase());
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).findCityByName(nameLocation.toUpperCase());
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).findDepartmentByName(nameLocation.toUpperCase());
     }
 }

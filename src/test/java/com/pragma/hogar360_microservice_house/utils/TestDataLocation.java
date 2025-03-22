@@ -13,6 +13,7 @@ public class TestDataLocation {
         cityModel.setId(1L);
         cityModel.setName("City 1");
         cityModel.setDescription("Description 1");
+        cityModel.setDepartmentModel(getDepartmentModel());
         return cityModel;
     }
 
@@ -21,7 +22,6 @@ public class TestDataLocation {
         departmentModel.setId(1L);
         departmentModel.setName("Department 1");
         departmentModel.setDescription("Description 1");
-        departmentModel.setCity(getCityModel());
         return departmentModel;
     }
 
@@ -102,23 +102,23 @@ public class TestDataLocation {
         return city.getName();
     }
 
-    public static List<DepartmentModel> getLocationsModels(){
-        DepartmentModel department = getDepartmentModel();
-        List<DepartmentModel> departmentModelList = new ArrayList<>();
-        departmentModelList.add(department);
-        departmentModelList.add(department);
-        return departmentModelList;
+    public static List<CityModel> getLocationsModels(){
+        CityModel city = getCityModel();
+        List<CityModel> cityModelList = new ArrayList<>();
+        cityModelList.add(city);
+        cityModelList.add(city);
+        return cityModelList;
     }
 
-    public static List<DepartmentModel> getLocationsModelsSize1(){
-        DepartmentModel department = getDepartmentModel();
-        List<DepartmentModel> departmentModelList = new ArrayList<>();
-        departmentModelList.add(department);
-        return departmentModelList;
+    public static List<CityModel> getLocationsModelsSize1(){
+        CityModel city = getCityModel();
+        List<CityModel> cityModelList = new ArrayList<>();
+        cityModelList.add(city);
+        return cityModelList;
     }
 
-    public static final Integer PAGE_PAGINATION = 1;
-    public static final Integer PAGE_NOT_FOUND_PAGINATION = 0;
+    public static final Integer PAGE_PAGINATION = 0;
+    public static final Integer PAGE_NOT_FOUND_PAGINATION = 100;
     public static final String NAME_LOCATION_BLANK_PAGINATION = "";
     public static final Integer SIZE_PAGINATION = 10;
     public static final String ORDER_BY_CITY_PAGINATION = "city";

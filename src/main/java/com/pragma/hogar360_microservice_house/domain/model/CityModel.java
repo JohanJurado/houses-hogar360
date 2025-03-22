@@ -1,20 +1,15 @@
 package com.pragma.hogar360_microservice_house.domain.model;
 
-import com.pragma.hogar360_microservice_house.domain.exceptions.LocationDescriptionMaxSizeExceedException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.LocationNameMaxSizeExceedException;
-import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
-import com.pragma.hogar360_microservice_house.domain.util.validations.Validations;
-
-import java.util.List;
-
 public class CityModel {
 
     private Long id;
     private String name;
     private String description;
 
+    private DepartmentModel departmentModel;
+
     public CityModel() {
-        // Empty constructor to validate with setters
+        // Inserting data into Setters
     }
 
     public Long getId() {
@@ -30,8 +25,6 @@ public class CityModel {
     }
 
     public void setName(String name) {
-        Validations.validationByAttributeIsNullOrBlank(name, DomainConstants.FIELD_NAME_NULL_MESSAGE);
-        Validations.validationByLimitCharacters(name, DomainConstants.MAX_NAME_SIZE_LOCATION, new LocationNameMaxSizeExceedException());
         this.name = name;
     }
 
@@ -40,8 +33,14 @@ public class CityModel {
     }
 
     public void setDescription(String description) {
-        Validations.validationByAttributeIsNullOrBlank(description, DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE);
-        Validations.validationByLimitCharacters(description, DomainConstants.MAX_DESCRIPTION_SIZE_LOCATION, new LocationDescriptionMaxSizeExceedException());
         this.description = description;
+    }
+
+    public DepartmentModel getDepartmentModel() {
+        return departmentModel;
+    }
+
+    public void setDepartmentModel(DepartmentModel departmentModel) {
+        this.departmentModel = departmentModel;
     }
 }

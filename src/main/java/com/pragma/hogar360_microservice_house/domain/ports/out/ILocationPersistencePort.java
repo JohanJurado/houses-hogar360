@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ILocationPersistencePort {
-    CityModel saveCity(CityModel cityModel);
-    Optional<CityModel> findCityByName(String nameCity);
-    List<CityModel> getAllCities();
-
-    void saveDepartment(DepartmentModel departmentModel);
+    DepartmentModel saveDepartment(DepartmentModel departmentModel);
     Optional<DepartmentModel> findDepartmentByName(String nameDepartment);
     List<DepartmentModel> getAllDepartments();
-    List<DepartmentModel> findAllByCityName(String nameCity);
+
+    void saveCity(CityModel cityModel);
+    Optional<CityModel> findCityByName(String nameCity);
+    List<CityModel> getAllCities();
+    List<CityModel> findAllByDepartmentName(String nameDepartment);
 
 
 

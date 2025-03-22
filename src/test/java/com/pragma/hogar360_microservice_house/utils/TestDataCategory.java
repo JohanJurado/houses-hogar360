@@ -64,8 +64,8 @@ public class TestDataCategory {
         return categoryModelList;
     }
 
-    public static final Integer PAGE_PAGINATION = 1;
-    public static final Integer PAGE_NOT_FOUND_PAGINATION = 0;
+    public static final Integer PAGE_PAGINATION = 0;
+    public static final Integer PAGE_NOT_FOUND_PAGINATION = 100;
     public static final String NAME_CATEGORY_BLANK_PAGINATION = "";
     public static final Integer SIZE_PAGINATION = 10;
     public static final boolean ORDER_ASC_PAGINATION = true;
