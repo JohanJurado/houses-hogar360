@@ -14,15 +14,10 @@ public class DepartmentEntity {
     private String name;
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "city_id")
-    private CityEntity city;
-
-    public DepartmentEntity(Long id, String name, String description, CityEntity city) {
+    public DepartmentEntity(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.city = city;
     }
 
     public Long getId() {
@@ -49,11 +44,4 @@ public class DepartmentEntity {
         this.description = description;
     }
 
-    public CityEntity getCity() {
-        return city;
-    }
-
-    public void setCity(CityEntity city) {
-        this.city = city;
-    }
 }

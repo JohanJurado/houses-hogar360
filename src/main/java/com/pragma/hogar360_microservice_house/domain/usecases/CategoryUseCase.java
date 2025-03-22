@@ -23,13 +23,13 @@ public class CategoryUseCase implements ICategoryServicePort {
 
     @Override
     public void save(CategoryModel categoryModel) {
+        Validations.validationByAttributeIsNullOrBlank(categoryModel.getName(), new CategoryNameCannotBeEmptyException());
+        Validations.validationByAttributeIsNullOrBlank(categoryModel.getDescription(), new CategoryDescriptionCannotBeEmptyException());
+        Validations.validationByLimitCharacters(categoryModel.getName(), DomainConstants.MAX_NAME_SIZE_CATEGORY, new CategoryNameMaxSizeExceedException());
+        Validations.validationByLimitCharacters(categoryModel.getDescription(), DomainConstants.MAX_DESCRIPTION_SIZE_CATEGORY, new CategoryDescriptionMaxSizeExceedException());
+
         categoryModel.setName(categoryModel.getName().toUpperCase());
         categoryModel.setDescription(categoryModel.getDescription().toUpperCase());
-
-        Validations.validationByAttributeIsNullOrBlank(categoryModel.getName(), new CategoryNameCannotBeEmptyException());
-        Validations.validationByLimitCharacters(categoryModel.getName(), DomainConstants.MAX_NAME_SIZE_CATEGORY, new CategoryNameMaxSizeExceedException());
-        Validations.validationByAttributeIsNullOrBlank(categoryModel.getDescription(), new CategoryDescriptionCannotBeEmptyException());
-        Validations.validationByLimitCharacters(categoryModel.getDescription(), DomainConstants.MAX_DESCRIPTION_SIZE_CATEGORY, new CategoryDescriptionMaxSizeExceedException());
 
         if (categoryPersistencePort.findByName(categoryModel.getName()).isPresent()){
             throw new CategoryAlreadyExistsException();

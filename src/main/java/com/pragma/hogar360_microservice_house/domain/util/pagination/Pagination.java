@@ -14,16 +14,22 @@ public class Pagination<T> {
     private int totalPages;
     private boolean last;
 
-    public Pagination() {
-    }
-
     public Pagination(List<T> content, int pageNumber, int pageSize, Comparator<T> orderBy, boolean orderAsc) {
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
-        this.content = paginationContent(content, orderBy, orderAsc);
         this.totalElements = content.size();
+        this.content = paginationContent(content, orderBy, orderAsc);
         this.totalPages = (int) Math.ceil((double) totalElements / pageSize);
         this.last = pageNumber >= totalPages;
+    }
+
+    public Pagination(List<T> content, int pageNumber, int pageSize, int totalPages, boolean last) {
+        this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
+        this.content = content;
+        this.totalElements = content.size();
+        this.totalPages = totalPages;
+        this.last = last;
     }
 
     public List<T> getContent() {
@@ -54,10 +60,10 @@ public class Pagination<T> {
 
         List<T> sortedModelList = orderList(modelList, orderBy, orderAsc);
 
-        int fromIndex = (pageNumber-1)*pageSize;
+        int fromIndex = pageNumber * pageSize;
         int toIndex = Math.min(fromIndex + pageSize, totalElements);
 
-        if (fromIndex >= sortedModelList.size() || fromIndex < 0) {
+        if (fromIndex >= sortedModelList.size() || fromIndex < PaginationConstants.PAGE_INVALID_NEGATIVE) {
             throw new PageNotFoundException();
         }
 

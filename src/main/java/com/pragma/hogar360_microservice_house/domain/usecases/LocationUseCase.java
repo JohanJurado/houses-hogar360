@@ -7,6 +7,7 @@ import com.pragma.hogar360_microservice_house.domain.ports.in.ILocationServicePo
 import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
+import com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants;
 import com.pragma.hogar360_microservice_house.domain.util.validations.Validations;
 
 import java.util.*;
@@ -21,11 +22,6 @@ public class LocationUseCase implements ILocationServicePort {
 
     @Override
     public void save(CityModel cityModel, DepartmentModel departmentModel) {
-        cityModel.setName(cityModel.getName().toUpperCase());
-        cityModel.setDescription(cityModel.getDescription().toUpperCase());
-        departmentModel.setName(departmentModel.getName().toUpperCase());
-        departmentModel.setDescription(departmentModel.getDescription().toUpperCase());
-
         Validations.validationByAttributeIsNullOrBlank(cityModel.getName(), new LocationCityNameCannotBeEmptyException());
         Validations.validationByLimitCharacters(cityModel.getName(), DomainConstants.MAX_NAME_SIZE_LOCATION, new LocationNameMaxSizeExceedException());
         Validations.validationByAttributeIsNullOrBlank(cityModel.getDescription(), new LocationCityDescriptionCannotBeEmptyException());
@@ -36,10 +32,15 @@ public class LocationUseCase implements ILocationServicePort {
         Validations.validationByAttributeIsNullOrBlank(departmentModel.getDescription(), new LocationDepartmentDescriptionCannotBeEmptyException());
         Validations.validationByLimitCharacters(departmentModel.getDescription(), DomainConstants.MAX_DESCRIPTION_SIZE_LOCATION, new LocationDescriptionMaxSizeExceedException());
 
-        if (locationPersistencePort.findCityByName(cityModel.getName()).isPresent()){
+        cityModel.setName(cityModel.getName().toUpperCase());
+        cityModel.setDescription(cityModel.getDescription().toUpperCase());
+        departmentModel.setName(departmentModel.getName().toUpperCase());
+        departmentModel.setDescription(departmentModel.getDescription().toUpperCase());
+
+        Optional<DepartmentModel> departmentModelFound = locationPersistencePort.findDepartmentByName(departmentModel.getName());
+        if (locationPersistencePort.findCityByName(cityModel.getName()).isPresent() && departmentModelFound.isPresent()){
             throw new LocationAlreadyExistsException();
         }
-        Optional<DepartmentModel> departmentModelFound = locationPersistencePort.findDepartmentByName(departmentModel.getName());
         if (departmentModelFound.isEmpty()){
             DepartmentModel departmentModelSave = locationPersistencePort.saveDepartment(departmentModel);
             cityModel.setDepartmentModel(departmentModelSave);
@@ -68,7 +69,7 @@ public class LocationUseCase implements ILocationServicePort {
 
         List<CityModel> locationListFound;
         if (locationPersistencePort.findDepartmentByName(nameLocation.toUpperCase()).isPresent()){
-            locationListFound = new ArrayList<>(locationPersistencePort.findAllByDepartmentName(nameLocation));
+            locationListFound = new ArrayList<>(locationPersistencePort.findAllByDepartmentName(nameLocation.toUpperCase()));
         } else if (locationPersistencePort.findCityByName(nameLocation.toUpperCase()).isPresent()){
             locationListFound = List.of(Objects.requireNonNull(locationPersistencePort.findCityByName(nameLocation.toUpperCase()).orElse(null)));
         } else {
@@ -80,9 +81,9 @@ public class LocationUseCase implements ILocationServicePort {
 
     private Pagination<CityModel> paginationOrderBy(List<CityModel> cityModelList, Integer page, Integer size, String orderBy, boolean orderAsc){
 
-        if (orderBy.equalsIgnoreCase("city")) {
+        if (orderBy.equalsIgnoreCase(PaginationConstants.CITY_ORDER_BY_PAGINATION)) {
             return new Pagination<>(cityModelList, page, size, Comparator.comparing(CityModel::getName), orderAsc);
-        } else if (orderBy.equalsIgnoreCase("department")){
+        } else if (orderBy.equalsIgnoreCase(PaginationConstants.DEPARTMENT_ORDER_BY_PAGINATION)){
             return new Pagination<>(cityModelList, page, size, Comparator.comparing(cityModel -> cityModel.getDepartmentModel().getName()), orderAsc);
         } else {
             throw new LocationOrderNotFoundException();

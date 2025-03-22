@@ -5,6 +5,7 @@ import com.pragma.hogar360_microservice_house.application.dtos.response.Location
 import com.pragma.hogar360_microservice_house.application.dtos.response.SaveDtoResponses;
 import com.pragma.hogar360_microservice_house.application.services.ILocationService;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
+import com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -69,11 +70,11 @@ public class LocationController {
     })
     @GetMapping("/")
     public ResponseEntity<Pagination<LocationResponse>> getLocations(
-            @RequestParam(defaultValue = "") String nameLocation,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(defaultValue = "") String orderBy,
-            @RequestParam(defaultValue = "true") boolean orderAsc
+            @RequestParam(defaultValue = PaginationConstants.NAME_LOCATION_DEFAULT_PAGINATION) String nameLocation,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_DEFAULT_PAGINATION) Integer page,
+            @RequestParam(defaultValue = PaginationConstants.SIZE_DEFAULT_PAGINATION) Integer size,
+            @RequestParam(defaultValue = PaginationConstants.ORDER_BY_DEFAULT_PAGINATION) String orderBy,
+            @RequestParam(defaultValue = PaginationConstants.ORDER_ASC_DEFAULT_PAGINATION) boolean orderAsc
     ){
         Pagination<LocationResponse> response = locationService.getLocations(nameLocation, page, size, orderBy, orderAsc);
         return ResponseEntity.status(HttpStatus.OK).body(response);

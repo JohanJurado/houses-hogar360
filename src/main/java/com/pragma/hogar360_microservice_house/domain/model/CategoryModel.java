@@ -6,12 +6,7 @@ public class CategoryModel {
     private String description;
 
     public CategoryModel() {
-    }
-
-    public CategoryModel(Long id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
+        // Inserting data into Setters
     }
 
     public Long getId() {

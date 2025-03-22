@@ -9,13 +9,7 @@ public class CityModel {
     private DepartmentModel departmentModel;
 
     public CityModel() {
-    }
-
-    public CityModel(Long id, String name, String description, DepartmentModel departmentModel) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.departmentModel = departmentModel;
+        // Inserting data into Setters
     }
 
     public Long getId() {

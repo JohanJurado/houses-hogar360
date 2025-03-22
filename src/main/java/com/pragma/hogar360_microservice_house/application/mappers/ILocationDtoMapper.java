@@ -23,27 +23,28 @@ public interface ILocationDtoMapper {
     @Mapping(target = "description", source="descriptionDepartment")
     DepartmentModel requestToModelDepartment(SaveLocationRequest saveLocationRequest);
 
-    @Mapping(target = "nameCity", source="city.name")
-    @Mapping(target = "descriptionCity", source="city.description")
-    @Mapping(target = "nameDepartment", source="name")
-    @Mapping(target = "descriptionDepartment", source="description")
-    LocationResponse modelToResponseDepartment(DepartmentModel departmentModel);
+    @Mapping(target = "nameCity", source="name")
+    @Mapping(target = "descriptionCity", source="description")
+    @Mapping(target = "nameDepartment", source="departmentModel.name")
+    @Mapping(target = "descriptionDepartment", source="departmentModel.description")
+    LocationResponse modelToResponseCity(CityModel cityModel);
 
-    default Pagination<LocationResponse> modelToResponse(Pagination<DepartmentModel> departmentModelPagination){
-        if (departmentModelPagination == null) {
+    default Pagination<LocationResponse> modelToResponse(Pagination<CityModel> cityModelPagination){
+        if (cityModelPagination == null) {
             return null;
         }
 
-        List<LocationResponse> content = departmentModelPagination.getContent()
+        List<LocationResponse> content = cityModelPagination.getContent()
                 .stream()
-                .map(this::modelToResponseDepartment)
+                .map(this::modelToResponseCity)
                 .toList();
 
         return new Pagination<>(
                 content,
-                departmentModelPagination.getPageNumber(),
-                departmentModelPagination.getPageSize(),
-                departmentModelPagination.getTotalElements()
+                cityModelPagination.getPageNumber(),
+                cityModelPagination.getPageSize(),
+                cityModelPagination.getTotalPages(),
+                cityModelPagination.isLast()
         );
     }
 }

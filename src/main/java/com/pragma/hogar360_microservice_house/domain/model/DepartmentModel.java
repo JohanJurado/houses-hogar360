@@ -1,12 +1,5 @@
 package com.pragma.hogar360_microservice_house.domain.model;
 
-import com.pragma.hogar360_microservice_house.domain.exceptions.LocationDepartmentDescriptionCannotBeEmptyException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.LocationDepartmentNameCannotBeEmptyException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.LocationDescriptionMaxSizeExceedException;
-import com.pragma.hogar360_microservice_house.domain.exceptions.LocationNameMaxSizeExceedException;
-import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
-import com.pragma.hogar360_microservice_house.domain.util.validations.Validations;
-
 public class DepartmentModel {
 
     private Long id;
@@ -14,13 +7,7 @@ public class DepartmentModel {
     private String description;
 
     public DepartmentModel() {
-        // Empty constructor to validate with setters
-    }
-
-    public DepartmentModel(Long id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
+        // Inserting data into Setters
     }
 
     public Long getId() {
