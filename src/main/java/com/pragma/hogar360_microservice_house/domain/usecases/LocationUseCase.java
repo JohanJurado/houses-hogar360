@@ -38,7 +38,7 @@ public class LocationUseCase implements ILocationServicePort {
         departmentModel.setDescription(departmentModel.getDescription().toUpperCase());
 
         Optional<DepartmentModel> departmentModelFound = locationPersistencePort.findDepartmentByName(departmentModel.getName());
-        if (locationPersistencePort.findCityByName(cityModel.getName()).isPresent() && departmentModelFound.isPresent()){
+        if (locationPersistencePort.findCityByName(cityModel.getName()).filter(list -> !list.isEmpty()).isPresent() && departmentModelFound.isPresent()){
             throw new LocationAlreadyExistsException();
         }
         if (departmentModelFound.isEmpty()){
@@ -70,10 +70,10 @@ public class LocationUseCase implements ILocationServicePort {
         List<CityModel> locationListFound;
         if (locationPersistencePort.findDepartmentByName(nameLocation.toUpperCase()).isPresent()){
             locationListFound = new ArrayList<>(locationPersistencePort.findAllByDepartmentName(nameLocation.toUpperCase()));
-        } else if (locationPersistencePort.findCityByName(nameLocation.toUpperCase()).isPresent()){
-            locationListFound = List.of(Objects.requireNonNull(locationPersistencePort.findCityByName(nameLocation.toUpperCase()).orElse(null)));
         } else {
-            throw new LocationNotFoundException();
+            locationListFound = locationPersistencePort.findCityByName(nameLocation.toUpperCase())
+                    .filter(list -> !list.isEmpty())
+                    .orElseThrow(LocationNotFoundException::new);
         }
 
         return paginationOrderBy(locationListFound, page, size, orderBy, orderAsc);

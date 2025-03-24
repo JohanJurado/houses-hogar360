@@ -141,4 +141,84 @@ public class ControllerAdvisor {
                 )
         );
     }
+
+    @ExceptionHandler(LocationCityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> locationCityNotFoundException(LocationCityNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_CITY_NOT_FOUND_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(LocationDepartmentNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> locationDepartmentNotFoundException(LocationDepartmentNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_DEPARTMENT_NOT_FOUND_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(HouseActivePublicationDateCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> houseActivePublicationDateCannotBeEmptyException(HouseActivePublicationDateCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.HOUSE_ACTIVE_PUBLICATION_DATE_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(HouseBathroomCountCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> houseBathroomCountCannotBeEmptyException(HouseBathroomCountCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.HOUSE_BATHROOM_COUNT_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(HouseBedroomCountCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> houseBedroomCountCannotBeEmptyException(HouseBedroomCountCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.HOUSE_BEDROOM_COUNT_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(HouseCategoryCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> houseCategoryCannotBeEmptyException(HouseCategoryCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.HOUSE_CATEGORY_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(HouseDescriptionCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> houseDescriptionCannotBeEmptyException(HouseDescriptionCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.HOUSE_DESCRIPTION_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(HouseLocationCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> houseLocationCannotBeEmptyException(HouseLocationCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.HOUSE_LOCATION_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(HouseNameCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> houseNameCannotBeEmptyException(HouseNameCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.HOUSE_NAME_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(HousePriceCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> housePriceCannotBeEmptyException(HousePriceCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.HOUSE_PRICE_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
 }

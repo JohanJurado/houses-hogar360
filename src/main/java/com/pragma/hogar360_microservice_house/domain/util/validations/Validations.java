@@ -1,5 +1,7 @@
 package com.pragma.hogar360_microservice_house.domain.util.validations;
 
+import com.pragma.hogar360_microservice_house.domain.exceptions.*;
+import com.pragma.hogar360_microservice_house.domain.model.HouseModel;
 import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
 
 import java.util.Objects;
@@ -21,5 +23,24 @@ public class Validations {
         if (attribute.isBlank()){
             throw ex;
         }
+    }
+
+    public static void validationByAttributeLObjectIsNullOrBlank(Object attribute, RuntimeException ex){
+        if (attribute == null){
+            throw ex;
+        }
+    }
+
+    public static void validationByHouseAttributes(HouseModel houseModel){
+        validationByAttributeIsNullOrBlank(houseModel.getName(), new HouseNameCannotBeEmptyException());
+        validationByAttributeIsNullOrBlank(houseModel.getDescription(), new HouseDescriptionCannotBeEmptyException());
+        validationByAttributeLObjectIsNullOrBlank(houseModel.getBedroomCount(), new HouseBedroomCountCannotBeEmptyException());
+        validationByAttributeLObjectIsNullOrBlank(houseModel.getBathroomCount(), new HouseBathroomCountCannotBeEmptyException());
+        validationByAttributeLObjectIsNullOrBlank(houseModel.getPrice(), new HousePriceCannotBeEmptyException());
+        validationByAttributeLObjectIsNullOrBlank(houseModel.getActivePublicationDate(), new HouseActivePublicationDateCannotBeEmptyException());
+
+        validationByAttributeIsNullOrBlank(houseModel.getCityModel().getName(), new HouseLocationCannotBeEmptyException());
+        validationByAttributeIsNullOrBlank(houseModel.getCityModel().getDepartmentModel().getName(), new HouseLocationCannotBeEmptyException());
+        validationByAttributeIsNullOrBlank(houseModel.getCategoryModel().getName(), new HouseCategoryCannotBeEmptyException());
     }
 }

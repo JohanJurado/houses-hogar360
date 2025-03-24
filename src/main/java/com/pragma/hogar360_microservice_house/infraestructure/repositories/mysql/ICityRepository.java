@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ICityRepository extends JpaRepository<CityEntity, Long> {
-    Optional<CityEntity> findByName(String nameCity);
+    Optional<List<CityEntity>> findByName(String nameCity);
     List<CityEntity> findByDepartmentEntityName(String nameDepartment);
 
 }

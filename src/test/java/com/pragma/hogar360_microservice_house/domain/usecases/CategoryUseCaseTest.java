@@ -44,9 +44,9 @@ class CategoryUseCaseTest {
         categoryUseCase.save(categoryIn);
 
         verify(categoryPersistencePort,
-                times(1)).findByName(categoryIn.getName());
+                times(TestConstants.VERIFY_ONE_INVOCATIONS)).findByName(categoryIn.getName());
         verify(categoryPersistencePort,
-                times(1)).save(categoryIn);
+                times(TestConstants.VERIFY_ONE_INVOCATIONS)).save(categoryIn);
     }
 
     @Test
@@ -64,7 +64,7 @@ class CategoryUseCaseTest {
         );
 
         verify(categoryPersistencePort,
-                times(1)).findByName(categoryIn.getName());
+                times(TestConstants.VERIFY_ONE_INVOCATIONS)).findByName(categoryIn.getName());
         verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
     }
 
@@ -166,7 +166,7 @@ class CategoryUseCaseTest {
         assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
         assertEquals(categoryModelList.size(), response.getTotalElements());
 
-        verify(categoryPersistencePort, times(1)).getAllCategories();
+        verify(categoryPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).getAllCategories();
     }
 
     @Test
@@ -179,10 +179,10 @@ class CategoryUseCaseTest {
         });
 
         Throwable cause = exception.getCause();
-        assertNotNull(cause, "La causa de la excepción no debe ser nula.");
-        assertEquals(IllegalStateException.class, cause.getClass(), "La causa debe ser IllegalStateException.");
+        assertNotNull(cause);
+        assertEquals(IllegalStateException.class, cause.getClass());
 
-        assertEquals(DomainConstants.UTILITY_CLASS_MESSAGE, cause.getMessage(), "El mensaje de la excepción no coincide.");
+        assertEquals(DomainConstants.UTILITY_CLASS_MESSAGE, cause.getMessage());
     }
 
     @Test
@@ -195,10 +195,10 @@ class CategoryUseCaseTest {
         });
 
         Throwable cause = exception.getCause();
-        assertNotNull(cause, "La causa de la excepción no debe ser nula.");
-        assertEquals(IllegalStateException.class, cause.getClass(), "La causa debe ser IllegalStateException.");
+        assertNotNull(cause);
+        assertEquals(IllegalStateException.class, cause.getClass());
 
-        assertEquals(DomainConstants.UTILITY_CLASS_MESSAGE, cause.getMessage(), "El mensaje de la excepción no coincide.");
+        assertEquals(DomainConstants.UTILITY_CLASS_MESSAGE, cause.getMessage());
     }
 
     @Test
@@ -211,10 +211,10 @@ class CategoryUseCaseTest {
         });
 
         Throwable cause = exception.getCause();
-        assertNotNull(cause, "La causa de la excepción no debe ser nula.");
-        assertEquals(IllegalStateException.class, cause.getClass(), "La causa debe ser IllegalStateException.");
+        assertNotNull(cause);
+        assertEquals(IllegalStateException.class, cause.getClass());
 
-        assertEquals(DomainConstants.UTILITY_CLASS_MESSAGE, cause.getMessage(), "El mensaje de la excepción no coincide.");
+        assertEquals(DomainConstants.UTILITY_CLASS_MESSAGE, cause.getMessage());
     }
 
     @Test
@@ -237,7 +237,7 @@ class CategoryUseCaseTest {
         assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
         assertEquals(categoryModelList.size(), response.getTotalElements());
 
-        verify(categoryPersistencePort, times(1)).getAllCategories();
+        verify(categoryPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).getAllCategories();
     }
 
     @Test
@@ -281,8 +281,7 @@ class CategoryUseCaseTest {
         assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
         assertEquals(categoryModelList.size(), response.getTotalElements());
 
-        verify(categoryPersistencePort, times(1)).findByName(nameCategory);
-
+        verify(categoryPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).findByName(nameCategory);
     }
 
     @Test
@@ -302,7 +301,6 @@ class CategoryUseCaseTest {
                 "Expected show CategoryNotFoundException, but it didn't"
         );
         verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
-
     }
 
     @Test
@@ -322,7 +320,6 @@ class CategoryUseCaseTest {
                 "Expected show PageNotFound, but it didn't"
         );
         verify(categoryPersistencePort, never()).save(any(CategoryModel.class));
-
     }
 
 }

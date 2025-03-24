@@ -10,7 +10,6 @@ import com.pragma.hogar360_microservice_house.domain.util.validations.Validation
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 public class CategoryUseCase implements ICategoryServicePort {
 
