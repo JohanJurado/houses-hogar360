@@ -30,9 +30,6 @@ public interface ILocationEntityMapper {
     @Mapping(target = "departmentModel", source="departmentEntity")
     CityModel entityToModelCity(CityEntity cityEntity);
 
-    default Optional<CityModel> entityOptionalToModelOptionalCity(Optional<CityEntity> cityEntity){
-        return cityEntity.map(this::entityToModelCity);
-    }
     @Mapping(target = "id", source="id")
     @Mapping(target = "name", source="name")
     @Mapping(target = "description", source="description")
@@ -43,5 +40,9 @@ public interface ILocationEntityMapper {
         return cityEntityList.stream()
                 .map(this::entityToModelCity)
                 .toList();
+    }
+
+    default Optional<List<CityModel>> entityOptionalListToModelOptionalListCity(Optional<List<CityEntity>> cityEntity){
+        return cityEntity.map(this::entityListToModelListCity);
     }
 }

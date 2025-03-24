@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -91,7 +92,7 @@ class LocationUseCaseTest {
                 .thenReturn(Optional.of(departmentIn));
 
         Mockito.when(locationPersistencePort.findCityByName(cityIn.getName().toUpperCase()))
-                .thenReturn(Optional.of(cityIn));
+                .thenReturn(Optional.of(List.of(cityIn)));
 
         assertThrows(
                 LocationAlreadyExistsException.class,
@@ -444,7 +445,7 @@ class LocationUseCaseTest {
                 .thenReturn(Optional.empty());
 
         Mockito.when(locationPersistencePort.findCityByName(nameLocation.toUpperCase()))
-                .thenReturn(Optional.of(TestDataLocation.getCityModel()));
+                .thenReturn(Optional.of(List.of(TestDataLocation.getCityModel())));
 
         Pagination<CityModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
 
@@ -453,7 +454,7 @@ class LocationUseCaseTest {
         assertEquals(TestDataCategory.SIZE_PAGINATION, response.getPageSize());
 
         verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).findDepartmentByName(nameLocation.toUpperCase());
-        verify(locationPersistencePort, times(TestConstants.VERIFY_TWO_INVOCATIONS)).findCityByName(nameLocation.toUpperCase());
+        verify(locationPersistencePort, times(TestConstants.VERIFY_ONE_INVOCATIONS)).findCityByName(nameLocation.toUpperCase());
     }
 
     @Test

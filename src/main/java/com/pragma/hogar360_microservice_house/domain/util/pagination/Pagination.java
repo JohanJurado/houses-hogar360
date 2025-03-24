@@ -19,7 +19,7 @@ public class Pagination<T> {
         this.pageSize = pageSize;
         this.totalElements = content.size();
         this.content = paginationContent(content, orderBy, orderAsc);
-        this.totalPages = (int) Math.ceil((double) totalElements / pageSize);
+        this.totalPages = (int) Math.floor((double) totalElements / pageSize);
         this.last = pageNumber >= totalPages;
     }
 
