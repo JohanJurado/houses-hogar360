@@ -38,7 +38,7 @@ public class LocationUseCase implements ILocationServicePort {
         departmentModel.setDescription(departmentModel.getDescription().toUpperCase());
 
         Optional<DepartmentModel> departmentModelFound = locationPersistencePort.findDepartmentByName(departmentModel.getName());
-        if (locationPersistencePort.findCityByName(cityModel.getName()).filter(list -> !list.isEmpty()).isPresent() && departmentModelFound.isPresent()){
+        if (!locationPersistencePort.findCityByName(cityModel.getName()).isEmpty() && departmentModelFound.isPresent()){
             throw new LocationAlreadyExistsException();
         }
         if (departmentModelFound.isEmpty()){
@@ -60,7 +60,7 @@ public class LocationUseCase implements ILocationServicePort {
     }
 
     private Pagination<CityModel> getAllLocations(Integer page, Integer size, String orderBy, boolean orderAsc){
-        List<CityModel> cityModelList = new ArrayList<>(locationPersistencePort.getAllCities());
+        List<CityModel> cityModelList = locationPersistencePort.getAllCities();
 
         return paginationOrderBy(cityModelList, page, size, orderBy, orderAsc);
     }
@@ -69,11 +69,12 @@ public class LocationUseCase implements ILocationServicePort {
 
         List<CityModel> locationListFound;
         if (locationPersistencePort.findDepartmentByName(nameLocation.toUpperCase()).isPresent()){
-            locationListFound = new ArrayList<>(locationPersistencePort.findAllByDepartmentName(nameLocation.toUpperCase()));
+            locationListFound = locationPersistencePort.findAllByDepartmentName(nameLocation.toUpperCase());
         } else {
-            locationListFound = locationPersistencePort.findCityByName(nameLocation.toUpperCase())
-                    .filter(list -> !list.isEmpty())
-                    .orElseThrow(LocationNotFoundException::new);
+            locationListFound = locationPersistencePort.findCityByName(nameLocation.toUpperCase());
+            if (locationListFound.isEmpty()){
+                throw new LocationNotFoundException();
+            }
         }
 
         return paginationOrderBy(locationListFound, page, size, orderBy, orderAsc);

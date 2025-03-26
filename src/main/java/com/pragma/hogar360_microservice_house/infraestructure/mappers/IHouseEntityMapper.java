@@ -5,6 +5,8 @@ import com.pragma.hogar360_microservice_house.infraestructure.entities.HouseEnti
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface IHouseEntityMapper {
 
@@ -17,4 +19,10 @@ public interface IHouseEntityMapper {
     @Mapping(target = "cityEntity.departmentEntity", source="cityModel.departmentModel")
     @Mapping(target = "categoryEntity", source="categoryModel")
     HouseEntity modelToEntity(HouseModel houseModel);
+
+    default List<HouseModel> entityListToModelList(List<HouseEntity> houseEntityList){
+        return houseEntityList.stream()
+                .map(this::entityToModel)
+                .toList();
+    }
 }

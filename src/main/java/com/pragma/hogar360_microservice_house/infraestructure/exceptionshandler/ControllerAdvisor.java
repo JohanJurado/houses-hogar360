@@ -221,4 +221,12 @@ public class ControllerAdvisor {
                 )
         );
     }
+
+    @ExceptionHandler(HouseOrderNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> houseOrderNotFoundException(HouseOrderNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.HOUSE_ORDER_NOT_FOUND_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
 }

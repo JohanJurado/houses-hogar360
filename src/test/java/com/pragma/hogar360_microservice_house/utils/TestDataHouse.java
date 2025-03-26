@@ -26,6 +26,23 @@ public class TestDataHouse {
     public static final Long VALID_BATHROOM_COUNT = 2L;
     public static final Double VALID_PRICE = 1500000.0;
 
+    public static final Integer PAGE_PAGINATION = 0;
+    public static final Integer PAGE_NOT_FOUND_PAGINATION = 100;
+    public static final String NAME_LOCATION_BLANK_PAGINATION = "";
+    public static final Integer SIZE_PAGINATION = 10;
+    public static final boolean ORDER_ASC_PAGINATION = true;
+
+    public static final String DEPARTMENT_ORDER_BY_PAGINATION = "department";
+    public static final String CITY_ORDER_BY_PAGINATION = "city";
+    public static final String CATEGORY_ORDER_BY_PAGINATION = "category";
+    public static final String BEDROOM_ORDER_BY_PAGINATION = "bedroomCount";
+    public static final String BATHROOM_ORDER_BY_PAGINATION = "bathroomCount";
+    public static final String PRICE_ORDER_BY_PAGINATION = "price";
+
+    public static final String ORDER_BY_OTHER_PAGINATION = "other";
+
+    public static final Integer EMPTY_SIZE_LIST = 0;
+
     public static DepartmentModel getValidDepartment() {
         DepartmentModel department = new DepartmentModel();
         department.setId(VALID_ID);

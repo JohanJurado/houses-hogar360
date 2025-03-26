@@ -4,10 +4,9 @@ import com.pragma.hogar360_microservice_house.infraestructure.entities.CityEntit
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ICityRepository extends JpaRepository<CityEntity, Long> {
-    Optional<List<CityEntity>> findByName(String nameCity);
+    List<CityEntity> findByName(String nameCity);
     List<CityEntity> findByDepartmentEntityName(String nameDepartment);
 
 }

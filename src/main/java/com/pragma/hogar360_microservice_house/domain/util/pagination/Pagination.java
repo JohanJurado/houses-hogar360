@@ -19,8 +19,8 @@ public class Pagination<T> {
         this.pageSize = pageSize;
         this.totalElements = content.size();
         this.content = paginationContent(content, orderBy, orderAsc);
-        this.totalPages = (int) Math.floor((double) totalElements / pageSize);
-        this.last = pageNumber >= totalPages;
+        this.totalPages = (int) Math.ceil((double) totalElements / pageSize);
+        this.last = pageNumber >= totalPages - PaginationConstants.PAGE_DIFF_INDEX;
     }
 
     public Pagination(List<T> content, int pageNumber, int pageSize, int totalPages, boolean last) {
@@ -58,6 +58,10 @@ public class Pagination<T> {
 
     private List<T> paginationContent(List<T> modelList, Comparator<T> orderBy, boolean orderAsc){
 
+        if (modelList.isEmpty()){
+            return modelList;
+        }
+
         List<T> sortedModelList = orderList(modelList, orderBy, orderAsc);
 
         int fromIndex = pageNumber * pageSize;
@@ -70,9 +74,9 @@ public class Pagination<T> {
         return sortedModelList.subList(fromIndex, toIndex);
     }
 
-    private static<T> List<T> orderList(List<T> modelList, Comparator<T> orderBy, boolean orderAsc){
+    private List<T> orderList(List<T> modelList, Comparator<T> orderBy, boolean orderAsc){
 
-        if (modelList.size() == 1){
+        if (modelList.size() == PaginationConstants.SIZE_ONE_LIST_PAGINATION){
             return modelList;
         }
 

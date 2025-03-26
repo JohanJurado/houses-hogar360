@@ -43,7 +43,7 @@ class LocationUseCaseTest {
                 .thenReturn(Optional.empty());
 
         Mockito.when(locationPersistencePort.findCityByName(cityIn.getName().toUpperCase()))
-                .thenReturn(Optional.empty());
+                .thenReturn(List.of());
 
         locationUseCase.save(cityIn, departmentIn);
 
@@ -68,7 +68,7 @@ class LocationUseCaseTest {
                 .thenReturn(Optional.of(departmentIn));
 
         Mockito.when(locationPersistencePort.findCityByName(cityIn.getName().toUpperCase()))
-                .thenReturn(Optional.empty());
+                .thenReturn(List.of());
 
         locationUseCase.save(cityIn, departmentIn);
 
@@ -92,7 +92,7 @@ class LocationUseCaseTest {
                 .thenReturn(Optional.of(departmentIn));
 
         Mockito.when(locationPersistencePort.findCityByName(cityIn.getName().toUpperCase()))
-                .thenReturn(Optional.of(List.of(cityIn)));
+                .thenReturn(List.of(cityIn));
 
         assertThrows(
                 LocationAlreadyExistsException.class,
@@ -445,7 +445,7 @@ class LocationUseCaseTest {
                 .thenReturn(Optional.empty());
 
         Mockito.when(locationPersistencePort.findCityByName(nameLocation.toUpperCase()))
-                .thenReturn(Optional.of(List.of(TestDataLocation.getCityModel())));
+                .thenReturn(List.of(TestDataLocation.getCityModel()));
 
         Pagination<CityModel> response = locationUseCase.getLocations(nameLocation, page, size, orderBy, orderAsc);
 
@@ -493,7 +493,7 @@ class LocationUseCaseTest {
         boolean orderAsc = TestDataLocation.ORDER_ASC_PAGINATION;
 
         Mockito.when(locationPersistencePort.findCityByName(nameLocation.toUpperCase()))
-                .thenReturn(Optional.empty());
+                .thenReturn(List.of());
 
         Mockito.when(locationPersistencePort.findDepartmentByName(nameLocation.toUpperCase()))
                 .thenReturn(Optional.empty());

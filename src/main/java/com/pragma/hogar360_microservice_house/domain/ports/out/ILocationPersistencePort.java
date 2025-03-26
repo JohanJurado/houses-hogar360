@@ -12,7 +12,7 @@ public interface ILocationPersistencePort {
     List<DepartmentModel> getAllDepartments();
 
     void saveCity(CityModel cityModel);
-    Optional<List<CityModel>> findCityByName(String nameCity);
+    List<CityModel> findCityByName(String nameCity);
     List<CityModel> getAllCities();
     List<CityModel> findAllByDepartmentName(String nameDepartment);
 

@@ -22,7 +22,7 @@ import java.awt.print.Book;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/location")
-@Tag(name = "Locations", description = "API to save locations")
+@Tag(name = "Locations", description = "API to manage locations")
 public class LocationController {
 
     private final ILocationService locationService;
@@ -73,7 +73,7 @@ public class LocationController {
             @RequestParam(defaultValue = PaginationConstants.NAME_LOCATION_DEFAULT_PAGINATION) String nameLocation,
             @RequestParam(defaultValue = PaginationConstants.PAGE_DEFAULT_PAGINATION) Integer page,
             @RequestParam(defaultValue = PaginationConstants.SIZE_DEFAULT_PAGINATION) Integer size,
-            @RequestParam(defaultValue = PaginationConstants.ORDER_BY_DEFAULT_PAGINATION) String orderBy,
+            @RequestParam(defaultValue = PaginationConstants.ORDER_BY_LOCATION_DEFAULT_PAGINATION) String orderBy,
             @RequestParam(defaultValue = PaginationConstants.ORDER_ASC_DEFAULT_PAGINATION) boolean orderAsc
     ){
         Pagination<LocationResponse> response = locationService.getLocations(nameLocation, page, size, orderBy, orderAsc);

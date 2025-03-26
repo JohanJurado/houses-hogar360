@@ -41,8 +41,4 @@ public interface ILocationEntityMapper {
                 .map(this::entityToModelCity)
                 .toList();
     }
-
-    default Optional<List<CityModel>> entityOptionalListToModelOptionalListCity(Optional<List<CityEntity>> cityEntity){
-        return cityEntity.map(this::entityListToModelListCity);
-    }
 }

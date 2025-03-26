@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -19,5 +21,13 @@ public class HousePersistenceAdapter implements IHousePersistencePort {
     @Override
     public void save(HouseModel houseModel) {
         houseRepository.save(houseEntityMapper.modelToEntity(houseModel));
+    }
+
+    @Override
+    public List<HouseModel> findHousesByFilters(String nameCity, String nameDepartment, String nameCategory,
+                                                Long bedroomCount, Long bathroomCount, Double minPrice, Double maxPrice) {
+        return houseEntityMapper.entityListToModelList(
+                houseRepository.findHousesByFilters(nameCity, nameDepartment, nameCategory, bedroomCount, bathroomCount, minPrice, maxPrice)
+        );
     }
 }

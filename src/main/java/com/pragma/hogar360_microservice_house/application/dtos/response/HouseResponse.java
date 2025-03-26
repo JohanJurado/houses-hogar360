@@ -1,14 +1,12 @@
-package com.pragma.hogar360_microservice_house.application.dtos.request;
+package com.pragma.hogar360_microservice_house.application.dtos.response;
 
-import java.time.LocalDate;
-
-public record SaveHouseRequest(
+public record HouseResponse(
         String name,
         String description,
         Long bedroomCount,
         Long bathroomCount,
         Double price,
-        LocalDate activePublicationDate,
+        String publicationStatus,
         String cityName,
         String departmentName,
         String categoryName

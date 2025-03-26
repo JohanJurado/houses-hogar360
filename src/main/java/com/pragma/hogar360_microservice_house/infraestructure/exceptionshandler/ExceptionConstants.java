@@ -32,5 +32,5 @@ public class ExceptionConstants {
     public static final String HOUSE_LOCATION_CANNOT_BE_NULL_MESSAGE = "The location of house cannot be null or blank";
     public static final String HOUSE_NAME_CANNOT_BE_NULL_MESSAGE = "The name of house cannot be null or blank";
     public static final String HOUSE_PRICE_CANNOT_BE_NULL_MESSAGE = "The price of house cannot be null or blank";
-
+    public static final String HOUSE_ORDER_NOT_FOUND_MESSAGE = "Order house not found";
 }

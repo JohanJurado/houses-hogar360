@@ -44,8 +44,8 @@ public class LocationPersistenceAdapter implements ILocationPersistencePort {
     }
 
     @Override
-    public Optional<List<CityModel>> findCityByName(String nameCity) {
-        return locationEntityMapper.entityOptionalListToModelOptionalListCity(cityRepository.findByName(nameCity));
+    public List<CityModel> findCityByName(String nameCity) {
+        return locationEntityMapper.entityListToModelListCity(cityRepository.findByName(nameCity));
     }
 
     @Override
