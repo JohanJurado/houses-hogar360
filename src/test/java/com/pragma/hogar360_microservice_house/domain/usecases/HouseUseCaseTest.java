@@ -80,7 +80,7 @@ class HouseUseCaseTest {
         when(locationPersistencePort.findCityByName(any())).thenReturn(List.of());
 
         assertThrows(
-                LocationCityNotFoundException.class,
+                CityNotFoundException.class,
                 () -> houseUseCase.publish(house)
         );
     }
@@ -93,7 +93,7 @@ class HouseUseCaseTest {
         when(locationPersistencePort.findDepartmentByName(any())).thenReturn(Optional.empty());
 
         assertThrows(
-                LocationDepartmentNotFoundException.class,
+                DepartmentNotFoundException.class,
                 () -> houseUseCase.publish(house)
         );
     }

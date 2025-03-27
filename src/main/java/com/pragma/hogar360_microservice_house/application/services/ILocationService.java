@@ -7,5 +7,5 @@ import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 
 public interface ILocationService {
     SaveDtoResponses save(SaveLocationRequest saveLocationRequest);
-    Pagination<LocationResponse> getLocations(String nameCategory, Integer page, Integer size, String orderBy, boolean orderAsc);
+    Pagination<LocationResponse> getLocations(String nameLocation, Integer page, Integer size, String orderBy, boolean orderAsc);
 }

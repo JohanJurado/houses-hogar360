@@ -1,10 +1,7 @@
 package com.pragma.hogar360_microservice_house.domain.usecases;
 
 import com.pragma.hogar360_microservice_house.domain.exceptions.*;
-import com.pragma.hogar360_microservice_house.domain.model.CategoryModel;
-import com.pragma.hogar360_microservice_house.domain.model.CityModel;
-import com.pragma.hogar360_microservice_house.domain.model.DepartmentModel;
-import com.pragma.hogar360_microservice_house.domain.model.HouseModel;
+import com.pragma.hogar360_microservice_house.domain.model.*;
 import com.pragma.hogar360_microservice_house.domain.ports.in.IHouseServicePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ICategoryPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.IHousePersistencePort;
@@ -37,12 +34,12 @@ public class HouseUseCase implements IHouseServicePort {
         houseModel.setName(houseModel.getName().toUpperCase());
         houseModel.setDescription(houseModel.getDescription().toUpperCase());
 
-        List<CityModel> cityModelList = locationPersistencePort.findCityByName(houseModel.getCityModel().getName().toUpperCase());
+        List<LocationModel> cityModelList = locationPersistencePort.findAllByCityName(houseModel.getCityModel().getName().toUpperCase());
 
         if (cityModelList.isEmpty()){
-            throw new LocationCityNotFoundException();
+            throw new CityNotFoundException();
         }
-        DepartmentModel departmentModel = locationPersistencePort.findDepartmentByName(houseModel.getCityModel().getDepartmentModel().getName().toUpperCase()).orElseThrow(LocationDepartmentNotFoundException::new);
+        DepartmentModel departmentModel = locationPersistencePort.findDepartmentByName(houseModel.getCityModel().getDepartmentModel().getName().toUpperCase()).orElseThrow(DepartmentNotFoundException::new);
 
         if (cityModelList.getFirst().getDepartmentModel().getName().equalsIgnoreCase(departmentModel.getName())){
             houseModel.setCityModel(cityModelList.getFirst());

@@ -11,6 +11,7 @@ public final class DomainConstants {
 
     public static final Long MAX_NAME_SIZE_LOCATION = 50L;
     public static final Long MAX_DESCRIPTION_SIZE_LOCATION = 120L;
+    public static final Long MAX_NEIGHBORHOOD_SIZE_LOCATION = 120L;
 
     public static final String UTILITY_CLASS_MESSAGE = "Utility class";
 

@@ -2,128 +2,60 @@ package com.pragma.hogar360_microservice_house.utils;
 
 import com.pragma.hogar360_microservice_house.domain.model.CityModel;
 import com.pragma.hogar360_microservice_house.domain.model.DepartmentModel;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.pragma.hogar360_microservice_house.domain.model.LocationModel;
 
 public class TestDataLocation {
 
-    public static CityModel getCityModel(){
-        CityModel cityModel = new CityModel();
-        cityModel.setId(1L);
-        cityModel.setName("City 1");
-        cityModel.setDescription("Description 1");
-        cityModel.setDepartmentModel(getDepartmentModel());
-        return cityModel;
+    // Constantes generales
+    public static final Long VALID_ID = 1L;
+    public static final Long INVALID_ID = -1L;
+    public static final String VALID_NAME = "CIUDAD EJEMPLO";
+    public static final String VALID_DESCRIPTION = "Descripción válida";
+    public static final String VALID_NEIGHBORHOOD = "BARRIO EJEMPLO";
+    public static final String EMPTY_STRING = "";
+    public static final String BLANK_STRING = "   ";
+
+    // Tamaños máximos
+    public static final int MAX_NAME_SIZE = 50;
+    public static final int MAX_DESCRIPTION_SIZE = 200;
+    public static final int MAX_NEIGHBORHOOD_SIZE = 100;
+
+    // Objetos completos para testing
+    public static DepartmentModel getValidDepartment() {
+        DepartmentModel department = new DepartmentModel();
+        department.setId(VALID_ID);
+        department.setName(VALID_NAME);
+        department.setDescription(VALID_DESCRIPTION);
+        return department;
     }
 
-    public static DepartmentModel getDepartmentModel(){
-        DepartmentModel departmentModel = new DepartmentModel();
-        departmentModel.setId(1L);
-        departmentModel.setName("Department 1");
-        departmentModel.setDescription("Description 1");
-        return departmentModel;
+    public static CityModel getValidCity() {
+        CityModel city = new CityModel();
+        city.setId(VALID_ID);
+        city.setName(VALID_NAME);
+        city.setDescription(VALID_DESCRIPTION);
+        city.setDepartmentModel(getValidDepartment());
+        return city;
     }
 
-    public static CityModel getCityModelMaxName(){
-        CityModel cityModel = getCityModel();
-        cityModel.setName("1".repeat(51));
-        return cityModel;
+    public static LocationModel getValidLocation() {
+        LocationModel location = new LocationModel();
+        location.setId(VALID_ID);
+        location.setNeighborhood(VALID_NEIGHBORHOOD);
+        location.setCityModel(getValidCity());
+        return location;
     }
 
-    public static DepartmentModel getDepartmentModelMaxName(){
-        DepartmentModel departmentModel = getDepartmentModel();
-        departmentModel.setName("1".repeat(51));
-        return departmentModel;
+    // Casos especiales para pruebas
+    public static LocationModel getLocationWithEmptyNeighborhood() {
+        LocationModel location = getValidLocation();
+        location.setNeighborhood(EMPTY_STRING);
+        return location;
     }
 
-    public static CityModel getCityModelMaxDescription(){
-        CityModel cityModel = getCityModel();
-        cityModel.setDescription("1".repeat(121));
-        return cityModel;
+    public static LocationModel getLocationWithLongName() {
+        LocationModel location = getValidLocation();
+        location.getCityModel().setName("A".repeat(MAX_NAME_SIZE + 1));
+        return location;
     }
-
-    public static DepartmentModel getDepartmentModelMaxDescription(){
-        DepartmentModel departmentModel = getDepartmentModel();
-        departmentModel.setDescription("1".repeat(121));
-        return departmentModel;
-    }
-
-    public static CityModel getCityNameNull(){
-        CityModel cityModel = getCityModel();
-        cityModel.setName(null);
-        return cityModel;
-    }
-
-    public static CityModel getCityNameBlank(){
-        CityModel cityModel = getCityModel();
-        cityModel.setName("");
-        return cityModel;
-    }
-
-    public static DepartmentModel getDepartmentNameNull(){
-        DepartmentModel departmentModel = getDepartmentModel();
-        departmentModel.setName(null);
-        return departmentModel;
-    }
-
-    public static DepartmentModel getDepartmentNameBlank(){
-        DepartmentModel departmentModel = getDepartmentModel();
-        departmentModel.setName("");
-        return departmentModel;
-    }
-
-    public static CityModel getCityDescriptionNull(){
-        CityModel cityModel = getCityModel();
-        cityModel.setDescription(null);
-        return cityModel;
-    }
-
-    public static CityModel getCityDescriptionBlank(){
-        CityModel cityModel = getCityModel();
-        cityModel.setDescription("");
-        return cityModel;
-    }
-
-    public static DepartmentModel getDepartmentDescriptionNull(){
-        DepartmentModel departmentModel = getDepartmentModel();
-        departmentModel.setDescription(null);
-        return departmentModel;
-    }
-
-    public static DepartmentModel getDepartmentDescriptionBlank(){
-        DepartmentModel departmentModel = getDepartmentModel();
-        departmentModel.setDescription("");
-        return departmentModel;
-    }
-
-    public static String getNameLocation(){
-        CityModel city = getCityModel();
-        return city.getName();
-    }
-
-    public static List<CityModel> getLocationsModels(){
-        CityModel city = getCityModel();
-        List<CityModel> cityModelList = new ArrayList<>();
-        cityModelList.add(city);
-        cityModelList.add(city);
-        return cityModelList;
-    }
-
-    public static List<CityModel> getLocationsModelsSize1(){
-        CityModel city = getCityModel();
-        List<CityModel> cityModelList = new ArrayList<>();
-        cityModelList.add(city);
-        return cityModelList;
-    }
-
-    public static final Integer PAGE_PAGINATION = 0;
-    public static final Integer PAGE_NOT_FOUND_PAGINATION = 100;
-    public static final String NAME_LOCATION_BLANK_PAGINATION = "";
-    public static final Integer SIZE_PAGINATION = 10;
-    public static final String ORDER_BY_CITY_PAGINATION = "city";
-    public static final String ORDER_BY_DEPARTMENT_PAGINATION = "department";
-    public static final String ORDER_BY_OTHER_PAGINATION = "other";
-    public static final boolean ORDER_ASC_PAGINATION = true;
-    public static final boolean ORDER_DESC_PAGINATION = false;
 }
