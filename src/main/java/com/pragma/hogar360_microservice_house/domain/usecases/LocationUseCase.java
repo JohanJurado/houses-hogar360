@@ -1,19 +1,17 @@
 package com.pragma.hogar360_microservice_house.domain.usecases;
 
 import com.pragma.hogar360_microservice_house.domain.exceptions.*;
-import com.pragma.hogar360_microservice_house.domain.model.CityModel;
-import com.pragma.hogar360_microservice_house.domain.model.DepartmentModel;
 import com.pragma.hogar360_microservice_house.domain.model.LocationModel;
 import com.pragma.hogar360_microservice_house.domain.ports.in.ILocationServicePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ICityPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.IDepartmentPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersistencePort;
-import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants;
-import com.pragma.hogar360_microservice_house.domain.util.validations.Validations;
 
 import java.util.*;
+
+import static com.pragma.hogar360_microservice_house.domain.util.validations.LocationValidation.*;
 
 public class LocationUseCase implements ILocationServicePort {
 
@@ -21,7 +19,8 @@ public class LocationUseCase implements ILocationServicePort {
     private final ICityPersistencePort cityPersistencePort;
     private final IDepartmentPersistencePort departmentPersistencePort;
 
-    public LocationUseCase(ILocationPersistencePort locationPersistencePort, ICityPersistencePort cityPersistencePort, IDepartmentPersistencePort departmentPersistencePort) {
+    public LocationUseCase(ILocationPersistencePort locationPersistencePort, ICityPersistencePort cityPersistencePort,
+                           IDepartmentPersistencePort departmentPersistencePort) {
         this.locationPersistencePort = locationPersistencePort;
         this.cityPersistencePort = cityPersistencePort;
         this.departmentPersistencePort = departmentPersistencePort;
@@ -29,37 +28,34 @@ public class LocationUseCase implements ILocationServicePort {
 
     @Override
     public void save(LocationModel locationModel) {
-        Validations.validationByAttributeIsNullOrBlank(locationModel.getCityModel().getName(), new CityNameCannotBeEmptyException());
-        Validations.validationByAttributeIsNullOrBlank(locationModel.getCityModel().getDescription(), new CityDescriptionCannotBeEmptyException());
-        Validations.validationByLimitCharacters(locationModel.getCityModel().getName(), DomainConstants.MAX_NAME_SIZE_LOCATION, new LocationNameMaxSizeExceedException());
-        Validations.validationByLimitCharacters(locationModel.getCityModel().getDescription(), DomainConstants.MAX_DESCRIPTION_SIZE_LOCATION, new LocationDescriptionMaxSizeExceedException());
+        validationByLocationAttributes(locationModel);
+        toUpperStringLocationAttributes(locationModel);
 
-        Validations.validationByAttributeIsNullOrBlank(locationModel.getCityModel().getDepartmentModel().getName(), new DepartmentNameCannotBeEmptyException());
-        Validations.validationByAttributeIsNullOrBlank(locationModel.getCityModel().getDepartmentModel().getDescription(), new DepartmentDescriptionCannotBeEmptyException());
-        Validations.validationByLimitCharacters(locationModel.getCityModel().getDepartmentModel().getName(), DomainConstants.MAX_NAME_SIZE_LOCATION, new LocationNameMaxSizeExceedException());
-        Validations.validationByLimitCharacters(locationModel.getCityModel().getDepartmentModel().getDescription(), DomainConstants.MAX_DESCRIPTION_SIZE_LOCATION, new LocationDescriptionMaxSizeExceedException());
+        setDepartmentModelInLocationModel(locationModel);
+        setCityModelInLocationModel(locationModel);
 
-        Validations.validationByAttributeIsNullOrBlank(locationModel.getNeighborhood(), new LocationNeighborhoodCannotBeEmptyException());
-        Validations.validationByLimitCharacters(locationModel.getNeighborhood(), DomainConstants.MAX_NEIGHBORHOOD_SIZE_LOCATION, new LocationNeighborhoodMaxSizeExceedException());
-
-        locationModel.getCityModel().setName(locationModel.getCityModel().getName().toUpperCase());
-        locationModel.getCityModel().setDescription(locationModel.getCityModel().getDescription().toUpperCase());
-        locationModel.getCityModel().getDepartmentModel().setName(locationModel.getCityModel().getDepartmentModel().getName().toUpperCase());
-        locationModel.getCityModel().getDepartmentModel().setDescription(locationModel.getCityModel().getDepartmentModel().getDescription().toUpperCase());
-
-        DepartmentModel departmentModel = departmentPersistencePort.findByName(locationModel.getCityModel().getDepartmentModel().getName())
-                .orElse(departmentPersistencePort.save(locationModel.getCityModel().getDepartmentModel()));
-        locationModel.getCityModel().setDepartmentModel(departmentModel);
-
-        CityModel cityModel = cityPersistencePort.findByNameAndDepartmentId(locationModel.getCityModel().getName(), departmentModel.getId())
-                .orElse(cityPersistencePort.save(locationModel.getCityModel()));
-        locationModel.setCityModel(cityModel);
-
-        if (locationPersistencePort.findByNeighborhoodAndCityId(locationModel.getNeighborhood(), cityModel.getId()).isPresent()) {
+        if (locationPersistencePort.findByNeighborhoodAndCityId(locationModel.getNeighborhood(), locationModel.getCityModel().getId()).isPresent()) {
             throw new LocationAlreadyExistsException();
         }
 
         locationPersistencePort.save(locationModel);
+    }
+
+    private void setDepartmentModelInLocationModel(LocationModel locationModel){
+        locationModel.getCityModel().setDepartmentModel(
+                departmentPersistencePort.findByName(locationModel.getCityModel().getDepartmentModel().getName())
+                .orElse(departmentPersistencePort.save(locationModel.getCityModel().getDepartmentModel()))
+        );
+    }
+
+    private void setCityModelInLocationModel(LocationModel locationModel){
+        locationModel.setCityModel(
+                cityPersistencePort.findByNameAndDepartmentId(
+                        locationModel.getCityModel().getName(),
+                        locationModel.getCityModel().getDepartmentModel().getId()
+                )
+                .orElse(cityPersistencePort.save(locationModel.getCityModel()))
+        );
     }
 
     @Override

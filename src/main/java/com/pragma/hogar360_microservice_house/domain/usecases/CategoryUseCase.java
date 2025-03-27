@@ -6,10 +6,12 @@ import com.pragma.hogar360_microservice_house.domain.ports.in.ICategoryServicePo
 import com.pragma.hogar360_microservice_house.domain.ports.out.ICategoryPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
-import com.pragma.hogar360_microservice_house.domain.util.validations.Validations;
+import com.pragma.hogar360_microservice_house.domain.util.validations.GlobalValidations;
 
 import java.util.Comparator;
 import java.util.List;
+
+import static com.pragma.hogar360_microservice_house.domain.util.validations.CategoryValidation.*;
 
 public class CategoryUseCase implements ICategoryServicePort {
 
@@ -22,13 +24,9 @@ public class CategoryUseCase implements ICategoryServicePort {
 
     @Override
     public void save(CategoryModel categoryModel) {
-        Validations.validationByAttributeIsNullOrBlank(categoryModel.getName(), new CategoryNameCannotBeEmptyException());
-        Validations.validationByAttributeIsNullOrBlank(categoryModel.getDescription(), new CategoryDescriptionCannotBeEmptyException());
-        Validations.validationByLimitCharacters(categoryModel.getName(), DomainConstants.MAX_NAME_SIZE_CATEGORY, new CategoryNameMaxSizeExceedException());
-        Validations.validationByLimitCharacters(categoryModel.getDescription(), DomainConstants.MAX_DESCRIPTION_SIZE_CATEGORY, new CategoryDescriptionMaxSizeExceedException());
 
-        categoryModel.setName(categoryModel.getName().toUpperCase());
-        categoryModel.setDescription(categoryModel.getDescription().toUpperCase());
+        validationByCategoryAttributes(categoryModel);
+        toUpperStringCategoryAttributes(categoryModel);
 
         if (categoryPersistencePort.findByName(categoryModel.getName()).isPresent()){
             throw new CategoryAlreadyExistsException();

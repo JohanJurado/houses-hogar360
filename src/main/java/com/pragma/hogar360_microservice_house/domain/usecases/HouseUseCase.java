@@ -9,11 +9,14 @@ import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersiste
 import com.pragma.hogar360_microservice_house.domain.util.constants.StateHousesConstants;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants;
-import com.pragma.hogar360_microservice_house.domain.util.validations.Validations;
+import com.pragma.hogar360_microservice_house.domain.util.validations.GlobalValidations;
 
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+
+import static com.pragma.hogar360_microservice_house.domain.util.validations.HouseValidation.toUpperStringHouseAttributes;
+import static com.pragma.hogar360_microservice_house.domain.util.validations.HouseValidation.validationByHouseAttributes;
 
 public class HouseUseCase implements IHouseServicePort {
 
@@ -29,10 +32,8 @@ public class HouseUseCase implements IHouseServicePort {
 
     @Override
     public void publish(HouseModel houseModel) {
-        Validations.validationByHouseAttributes(houseModel);
-
-        houseModel.setName(houseModel.getName().toUpperCase());
-        houseModel.setDescription(houseModel.getDescription().toUpperCase());
+        validationByHouseAttributes(houseModel);
+        toUpperStringHouseAttributes(houseModel);
 
         List<LocationModel> cityModelList = locationPersistencePort.findAllByCityName(houseModel.getCityModel().getName().toUpperCase());
 

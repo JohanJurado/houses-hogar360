@@ -5,7 +5,7 @@ import com.pragma.hogar360_microservice_house.domain.model.CategoryModel;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ICategoryPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants;
-import com.pragma.hogar360_microservice_house.domain.util.validations.Validations;
+import com.pragma.hogar360_microservice_house.domain.util.validations.GlobalValidations;
 import com.pragma.hogar360_microservice_house.utils.TestConstants;
 import com.pragma.hogar360_microservice_house.utils.TestDataCategory;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
@@ -173,7 +173,7 @@ class CategoryUseCaseTest {
     @DisplayName("Test Validation Constructor ThrowsIllegalStateException")
     void testValidationConstructorThrowsIllegalStateException() {
         Exception exception = assertThrows(InvocationTargetException.class, () -> {
-            Constructor<Validations> constructor = Validations.class.getDeclaredConstructor();
+            Constructor<GlobalValidations> constructor = GlobalValidations.class.getDeclaredConstructor();
             constructor.setAccessible(true);
             constructor.newInstance();
         });
