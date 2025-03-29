@@ -14,13 +14,15 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface IHouseDtoMapper {
 
-    @Mapping(target = "cityModel.name", source="cityName")
-    @Mapping(target = "cityModel.departmentModel.name", source="departmentName")
+    @Mapping(target = "locationModel.neighborhood", source="neighborhood")
+    @Mapping(target = "locationModel.cityModel.name", source="cityName")
+    @Mapping(target = "locationModel.cityModel.departmentModel.name", source="departmentName")
     @Mapping(target = "categoryModel.name", source="categoryName")
     HouseModel requestToModel(SaveHouseRequest saveHouseRequest);
 
-    @Mapping(target = "cityName", source="cityModel.name")
-    @Mapping(target = "departmentName", source="cityModel.departmentModel.name")
+    @Mapping(target = "neighborhood", source="locationModel.neighborhood")
+    @Mapping(target = "cityName", source="locationModel.cityModel.name")
+    @Mapping(target = "departmentName", source="locationModel.cityModel.departmentModel.name")
     @Mapping(target = "categoryName", source="categoryModel.name")
     HouseResponse modelToResponse(HouseModel houseModel);
 

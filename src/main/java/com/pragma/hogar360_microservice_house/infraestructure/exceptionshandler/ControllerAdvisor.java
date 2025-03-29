@@ -134,22 +134,6 @@ public class ControllerAdvisor {
         );
     }
 
-    @ExceptionHandler(CityNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> locationCityNotFoundException(CityNotFoundException exception){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ExceptionResponse(ExceptionConstants.LOCATION_CITY_NOT_FOUND_MESSAGE, LocalDateTime.now()
-                )
-        );
-    }
-
-    @ExceptionHandler(DepartmentNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> locationDepartmentNotFoundException(DepartmentNotFoundException exception){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ExceptionResponse(ExceptionConstants.LOCATION_DEPARTMENT_NOT_FOUND_MESSAGE, LocalDateTime.now()
-                )
-        );
-    }
-
     @ExceptionHandler(HouseActivePublicationDateCannotBeEmptyException.class)
     public ResponseEntity<ExceptionResponse> houseActivePublicationDateCannotBeEmptyException(HouseActivePublicationDateCannotBeEmptyException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -216,7 +200,7 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(HouseOrderNotFoundException.class)
     public ResponseEntity<ExceptionResponse> houseOrderNotFoundException(HouseOrderNotFoundException exception){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ExceptionResponse(ExceptionConstants.HOUSE_ORDER_NOT_FOUND_MESSAGE, LocalDateTime.now()
                 )
         );
@@ -234,6 +218,14 @@ public class ControllerAdvisor {
     public ResponseEntity<ExceptionResponse> locationNeighborhoodMaxSizeExceedException(LocationNeighborhoodMaxSizeExceedException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ExceptionResponse(ExceptionConstants.LOCATION_NEIGHBORHOOD_MAX_SIZE_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(LocationNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> locationNotFoundException(LocationNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_NOT_FOUND_MESSAGE, LocalDateTime.now()
                 )
         );
     }

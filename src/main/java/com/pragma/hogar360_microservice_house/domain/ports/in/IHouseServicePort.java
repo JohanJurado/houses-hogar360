@@ -7,6 +7,7 @@ public interface IHouseServicePort {
 
     void publish(HouseModel houseModel);
     Pagination<HouseModel> getHouses(
+            String neighborhood,
             String nameCity,
             String nameDepartment,
             String nameCategory,

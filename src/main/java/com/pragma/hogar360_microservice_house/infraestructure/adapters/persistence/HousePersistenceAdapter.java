@@ -24,10 +24,10 @@ public class HousePersistenceAdapter implements IHousePersistencePort {
     }
 
     @Override
-    public List<HouseModel> findHousesByFilters(String nameCity, String nameDepartment, String nameCategory,
+    public List<HouseModel> findHousesByFilters(String neighborhood, String nameCity, String nameDepartment, String nameCategory,
                                                 Long bedroomCount, Long bathroomCount, Double minPrice, Double maxPrice) {
         return houseEntityMapper.entityListToModelList(
-                houseRepository.findHousesByFilters(nameCity, nameDepartment, nameCategory, bedroomCount, bathroomCount, minPrice, maxPrice)
+                houseRepository.findHousesByFilters(neighborhood, nameCity, nameDepartment, nameCategory, bedroomCount, bathroomCount, minPrice, maxPrice)
         );
     }
 }

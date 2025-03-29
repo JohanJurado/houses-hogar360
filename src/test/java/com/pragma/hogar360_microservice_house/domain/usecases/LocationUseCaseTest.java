@@ -1,24 +1,30 @@
 package com.pragma.hogar360_microservice_house.domain.usecases;
 
 import com.pragma.hogar360_microservice_house.domain.exceptions.*;
-import com.pragma.hogar360_microservice_house.domain.model.LocationModel;
-import com.pragma.hogar360_microservice_house.domain.ports.out.ICityPersistencePort;
-import com.pragma.hogar360_microservice_house.domain.ports.out.IDepartmentPersistencePort;
-import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersistencePort;
+import com.pragma.hogar360_microservice_house.domain.model.*;
+import com.pragma.hogar360_microservice_house.domain.ports.out.*;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
-import com.pragma.hogar360_microservice_house.utils.TestDataLocation;
+import com.pragma.hogar360_microservice_house.domain.util.validations.LocationValidation;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static com.pragma.hogar360_microservice_house.domain.util.constants.GlobalConstants.UTILITY_CLASS_MESSAGE;
+import static com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants.CITY_ORDER_BY_PAGINATION;
+import static com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants.DEPARTMENT_ORDER_BY_PAGINATION;
+import static com.pragma.hogar360_microservice_house.utils.constants.GlobalTestConstants.*;
+import static com.pragma.hogar360_microservice_house.utils.constants.LocationTestConstants.*;
+import static com.pragma.hogar360_microservice_house.utils.testdata.TestDataLocation.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,116 +33,134 @@ class LocationUseCaseTest {
     @Mock
     private ILocationPersistencePort locationPersistencePort;
     @Mock
-    private IDepartmentPersistencePort departmentPersistencePort;
-    @Mock
     private ICityPersistencePort cityPersistencePort;
+    @Mock
+    private IDepartmentPersistencePort departmentPersistencePort;
+
     @InjectMocks
     private LocationUseCase locationUseCase;
 
-    @Test
-    void save_WithValidLocation_ShouldSaveSuccessfully() {
-        // Arrange
-        LocationModel validLocation = TestDataLocation.getValidLocation();
+    @Nested
+    class SaveLocationTests {
+        @Test
+        void save_WithValidData_ShouldSaveLocation() {
+            LocationModel location = getValidLocation();
+            when(departmentPersistencePort.findByName(anyString())).thenReturn(Optional.of(location.getCityModel().getDepartmentModel()));
+            when(cityPersistencePort.findByNameAndDepartmentId(anyString(), anyLong())).thenReturn(Optional.of(location.getCityModel()));
+            when(locationPersistencePort.findByNeighborhoodAndCityId(anyString(), anyLong())).thenReturn(Optional.empty());
 
-        when(departmentPersistencePort.findByName(any())).thenReturn(Optional.empty());
-        when(departmentPersistencePort.save(any())).thenReturn(TestDataLocation.getValidDepartment());
-        when(cityPersistencePort.findByNameAndDepartmentId(any(), any())).thenReturn(Optional.empty());
-        when(cityPersistencePort.save(any())).thenReturn(TestDataLocation.getValidCity());
-        when(locationPersistencePort.findByNeighborhoodAndCityId(any(), any())).thenReturn(Optional.empty());
+            locationUseCase.save(location);
 
-        // Act
-        locationUseCase.save(validLocation);
+            verify(locationPersistencePort).save(location);
+        }
 
-        // Assert
-        verify(locationPersistencePort).save(validLocation);
+        @Test
+        void save_WithDuplicateDepartmentName_ShouldSaveLocation() {
+            LocationModel location = getValidLocation();
+            DepartmentModel departmentModel = getValidDepartment();
+            CityModel cityModel = getValidCity();
+            when(departmentPersistencePort.findByName(anyString())).thenReturn(Optional.empty());
+            when(departmentPersistencePort.save(location.getCityModel().getDepartmentModel())).thenReturn(departmentModel);
+            when(cityPersistencePort.findByNameAndDepartmentId(anyString(), anyLong())).thenReturn(Optional.of(cityModel));
+            when(locationPersistencePort.findByNeighborhoodAndCityId(anyString(), anyLong())).thenReturn(Optional.empty());
+
+            locationUseCase.save(location);
+
+            verify(locationPersistencePort).save(location);
+        }
+
+        @Test
+        void save_WithLongCityName_ShouldThrowException() {
+            LocationModel location = getValidLocation();
+            location.getCityModel().setName(INVALID_LONG_CITY_NAME);
+
+            assertThrows(LocationNameMaxSizeExceedException.class, () -> locationUseCase.save(location));
+        }
+
+        @Test
+        void save_WithEmptyCityDescription_ShouldThrowException() {
+            LocationModel location = getValidLocation();
+            location.getCityModel().setDescription(EMPTY_STRING);
+
+            assertThrows(CityDescriptionCannotBeEmptyException.class, () -> locationUseCase.save(location));
+        }
+
+        @Test
+        @DisplayName("Test LocationValidation Constructor ThrowsIllegalStateException")
+        void testLocationValidationConstructorThrowsIllegalStateException() {
+            Exception exception = assertThrows(InvocationTargetException.class, () -> {
+                Constructor<LocationValidation> constructor = LocationValidation.class.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                constructor.newInstance();
+            });
+
+            Throwable cause = exception.getCause();
+            assertNotNull(cause);
+            assertEquals(IllegalStateException.class, cause.getClass());
+
+            assertEquals(UTILITY_CLASS_MESSAGE, cause.getMessage());
+        }
+
+        @Test
+        void save_WithDuplicateNeighborhoodInSameCity_ShouldThrowException() {
+            LocationModel location = getValidLocation();
+            DepartmentModel departmentModel = getValidDepartment();
+            CityModel cityModel = getValidCity();
+            when(departmentPersistencePort.findByName(anyString())).thenReturn(Optional.of(departmentModel));
+            when(cityPersistencePort.findByNameAndDepartmentId(anyString(), anyLong())).thenReturn(Optional.of(cityModel));
+            when(locationPersistencePort.findByNeighborhoodAndCityId(anyString(), anyLong())).thenReturn(Optional.of(location));
+
+            assertThrows(LocationAlreadyExistsException.class, () -> locationUseCase.save(location));
+        }
     }
 
-    @Test
-    void save_WithEmptyNeighborhood_ShouldThrowException() {
-        // Arrange
-        LocationModel invalidLocation = TestDataLocation.getLocationWithEmptyNeighborhood();
+    @Nested
+    class GetLocationsTests {
+        @Test
+        void getLocations_WithSearchTerm_ShouldReturnMatchingLocations() {
+            List<LocationModel> locations = getMultipleLocations();
+            when(locationPersistencePort.findAllByCityOrDepartment(anyString())).thenReturn(locations);
 
-        // Act & Assert
-        assertThrows(LocationNeighborhoodCannotBeEmptyException.class,
-                () -> locationUseCase.save(invalidLocation));
-    }
+            Pagination<LocationModel> result = locationUseCase.getLocations(
+                    SEARCH_TERM_PARTIAL, PAGE_PAGINATION, SIZE_PAGINATION, CITY_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
 
-    @Test
-    void save_WithLongCityName_ShouldThrowException() {
-        // Arrange
-        LocationModel invalidLocation = TestDataLocation.getLocationWithLongName();
+            assertEquals(locations.size(), result.getContent().size());
+        }
 
-        // Act & Assert
-        assertThrows(LocationNameMaxSizeExceedException.class,
-                () -> locationUseCase.save(invalidLocation));
-    }
+        @Test
+        void getLocations_WithCityOrderAsc_ShouldReturnOrderedResults() {
+            List<LocationModel> locations = getMultipleLocations();
+            when(locationPersistencePort.findAllByCityOrDepartment(anyString())).thenReturn(locations);
 
-    @Test
-    void save_WithExistingLocation_ShouldThrowException() {
-        // Arrange
-        LocationModel validLocation = TestDataLocation.getValidLocation();
+            Pagination<LocationModel> result = locationUseCase.getLocations(
+                    NAME_BLANK_PAGINATION, PAGE_PAGINATION, SIZE_PAGINATION, CITY_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
 
-        when(departmentPersistencePort.findByName(any())).thenReturn(Optional.of(TestDataLocation.getValidDepartment()));
-        when(cityPersistencePort.findByNameAndDepartmentId(any(), any())).thenReturn(Optional.of(TestDataLocation.getValidCity()));
-        when(locationPersistencePort.findByNeighborhoodAndCityId(any(), any())).thenReturn(Optional.of(validLocation));
+            assertTrue(result.getContent().get(0).getCityModel().getName()
+                    .compareTo(result.getContent().get(1).getCityModel().getName()) <= 0);
+        }
 
-        // Act & Assert
-        assertThrows(LocationAlreadyExistsException.class,
-                () -> locationUseCase.save(validLocation));
-    }
+        @Test
+        void getLocations_WithDepartmentOrderDesc_ShouldReturnOrderedResults() {
+            List<LocationModel> locations = getMultipleLocations();
+            when(locationPersistencePort.findAllByCityOrDepartment(anyString())).thenReturn(locations);
 
-    @Test
-    void getLocations_WithBlankName_ShouldReturnAllLocations() {
-        // Arrange
-        List<LocationModel> mockLocations = List.of(TestDataLocation.getValidLocation());
-        when(locationPersistencePort.getAllLocations()).thenReturn(mockLocations);
+            Pagination<LocationModel> result = locationUseCase.getLocations(
+                    NAME_BLANK_PAGINATION, PAGE_PAGINATION, SIZE_PAGINATION, DEPARTMENT_ORDER_BY_PAGINATION, ORDER_DESC_PAGINATION);
 
-        // Act
-        Pagination<LocationModel> result = locationUseCase.getLocations("", 1, 10, "city", true);
+            assertTrue(result.getContent().get(0).getCityModel().getDepartmentModel().getName()
+                    .compareTo(result.getContent().get(1).getCityModel().getDepartmentModel().getName()) >= 0);
+        }
 
-        // Assert
-        assertEquals(1, result.getContent().size());
-        verify(locationPersistencePort).getAllLocations();
-    }
+        @Test
+        void getLocations_WithInvalidOrderBy_ShouldThrowException() {
+            List<LocationModel> locations = getMultipleLocations();
+            when(locationPersistencePort.findAllByCityOrDepartment(anyString())).thenReturn(locations);
 
-    @Test
-    void getLocations_WithDepartmentName_ShouldReturnFilteredLocations() {
-        // Arrange
-        List<LocationModel> mockLocations = List.of(TestDataLocation.getValidLocation());
-        when(departmentPersistencePort.findByName(any())).thenReturn(Optional.of(TestDataLocation.getValidDepartment()));
-        when(locationPersistencePort.findAllByDepartmentName(any())).thenReturn(mockLocations);
-
-        // Act
-        Pagination<LocationModel> result = locationUseCase.getLocations("DEPARTMENT", 1, 10, "department", true);
-
-        // Assert
-        assertEquals(1, result.getContent().size());
-        verify(locationPersistencePort).findAllByDepartmentName(any());
-    }
-
-    @Test
-    void getLocations_WithCityName_ShouldReturnFilteredLocations() {
-        // Arrange
-        List<LocationModel> mockLocations = List.of(TestDataLocation.getValidLocation());
-        when(departmentPersistencePort.findByName(any())).thenReturn(Optional.empty());
-        when(locationPersistencePort.findAllByCityName(any())).thenReturn(mockLocations);
-
-        // Act
-        Pagination<LocationModel> result = locationUseCase.getLocations("CITY", 1, 10, "city", true);
-
-        // Assert
-        assertEquals(1, result.getContent().size());
-        verify(locationPersistencePort).findAllByCityName(any());
-    }
-
-    @Test
-    void getLocations_WithInvalidOrderBy_ShouldThrowException() {
-        // Arrange
-        List<LocationModel> mockLocations = List.of(TestDataLocation.getValidLocation());
-        when(locationPersistencePort.getAllLocations()).thenReturn(mockLocations);
-
-        // Act & Assert
-        assertThrows(LocationOrderNotFoundException.class,
-                () -> locationUseCase.getLocations("", 1, 10, "invalid", true));
+            assertThrows(LocationOrderNotFoundException.class,
+                    () -> locationUseCase.getLocations(
+                            NAME_BLANK_PAGINATION, PAGE_PAGINATION, SIZE_PAGINATION, OTHER_PAGINATION, ORDER_ASC_PAGINATION
+                    )
+            );
+        }
     }
 }

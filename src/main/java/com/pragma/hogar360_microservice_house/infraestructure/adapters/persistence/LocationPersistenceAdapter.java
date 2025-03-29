@@ -31,17 +31,14 @@ public class LocationPersistenceAdapter implements ILocationPersistencePort {
     }
 
     @Override
-    public List<LocationModel> getAllLocations() {
-        return locationEntityMapper.entityListToModelList(locationRepository.findAll());
+    public Optional<LocationModel> findByNeighborhoodAndCityNameAndDepartmentName(String neighborhood, String nameCity, String nameDepartment) {
+        return locationEntityMapper.entityOptionalToModelOptional(
+                locationRepository.findByNeighborhoodAndCityEntityNameAndCityEntityDepartmentEntityName(neighborhood, nameCity, nameDepartment)
+        );
     }
 
     @Override
-    public List<LocationModel> findAllByDepartmentName(String departmentName) {
-        return locationEntityMapper.entityListToModelList(locationRepository.findAllByCityEntityDepartmentEntityName(departmentName));
-    }
-
-    @Override
-    public List<LocationModel> findAllByCityName(String cityName) {
-        return locationEntityMapper.entityListToModelList(locationRepository.findAllByCityEntityName(cityName));
+    public List<LocationModel> findAllByCityOrDepartment(String nameLocation) {
+        return locationEntityMapper.entityListToModelList(locationRepository.findByCityOrDepartment(nameLocation));
     }
 }

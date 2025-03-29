@@ -7,10 +7,12 @@ import com.pragma.hogar360_microservice_house.domain.ports.out.ICityPersistenceP
 import com.pragma.hogar360_microservice_house.domain.ports.out.IDepartmentPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
-import com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants;
 
 import java.util.*;
 
+import static com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants.CITY_ORDER_BY_PAGINATION;
+import static com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants.DEPARTMENT_ORDER_BY_PAGINATION;
+import static com.pragma.hogar360_microservice_house.domain.util.validations.GlobalValidations.normalizeToUpper;
 import static com.pragma.hogar360_microservice_house.domain.util.validations.LocationValidation.*;
 
 public class LocationUseCase implements ILocationServicePort {
@@ -31,20 +33,49 @@ public class LocationUseCase implements ILocationServicePort {
         validationByLocationAttributes(locationModel);
         toUpperStringLocationAttributes(locationModel);
 
-        setDepartmentModelInLocationModel(locationModel);
-        setCityModelInLocationModel(locationModel);
+        setDataLocationModel(locationModel);
 
-        if (locationPersistencePort.findByNeighborhoodAndCityId(locationModel.getNeighborhood(), locationModel.getCityModel().getId()).isPresent()) {
+        if (locationPersistencePort.findByNeighborhoodAndCityId(
+                locationModel.getNeighborhood(),
+                locationModel.getCityModel().getId()).isPresent()
+        ) {
             throw new LocationAlreadyExistsException();
         }
 
         locationPersistencePort.save(locationModel);
     }
 
+    @Override
+    public Pagination<LocationModel> getLocations(String nameLocation, Integer page, Integer size, String orderBy, boolean orderAsc) {
+        List<LocationModel> locationListFound = locationPersistencePort.findAllByCityOrDepartment(normalizeToUpper(nameLocation));
+        return paginationOrderBy(locationListFound, page, size, orderBy, orderAsc);
+    }
+
+    // get locations
+    private Pagination<LocationModel> paginationOrderBy(List<LocationModel> locationModelList, Integer page, Integer size, String orderBy, boolean orderAsc){
+
+        Comparator<LocationModel> comparator;
+        if (orderBy.equalsIgnoreCase(CITY_ORDER_BY_PAGINATION)) {
+            comparator = Comparator.comparing(locationModel -> locationModel.getCityModel().getName());
+        } else if (orderBy.equalsIgnoreCase(DEPARTMENT_ORDER_BY_PAGINATION)){
+            comparator = Comparator.comparing(locationModel -> locationModel.getCityModel().getDepartmentModel().getName());
+        } else {
+            throw new LocationOrderNotFoundException();
+        }
+
+        return new Pagination<>(locationModelList, page, size, comparator, orderAsc);
+    }
+
+    // save location
+    private void setDataLocationModel(LocationModel locationModel){
+        setDepartmentModelInLocationModel(locationModel);
+        setCityModelInLocationModel(locationModel);
+    }
+
     private void setDepartmentModelInLocationModel(LocationModel locationModel){
         locationModel.getCityModel().setDepartmentModel(
                 departmentPersistencePort.findByName(locationModel.getCityModel().getDepartmentModel().getName())
-                .orElse(departmentPersistencePort.save(locationModel.getCityModel().getDepartmentModel()))
+                .orElseGet(() -> departmentPersistencePort.save(locationModel.getCityModel().getDepartmentModel()))
         );
     }
 
@@ -54,47 +85,7 @@ public class LocationUseCase implements ILocationServicePort {
                         locationModel.getCityModel().getName(),
                         locationModel.getCityModel().getDepartmentModel().getId()
                 )
-                .orElse(cityPersistencePort.save(locationModel.getCityModel()))
+                .orElseGet(() -> cityPersistencePort.save(locationModel.getCityModel()))
         );
-    }
-
-    @Override
-    public Pagination<LocationModel> getLocations(String nameLocation, Integer page, Integer size, String orderBy, boolean orderAsc) {
-        if (nameLocation.isBlank()) {
-            return getAllLocations(page, size, orderBy, orderAsc);
-        }
-        return getLocationsByNameLocation(nameLocation, page, size, orderBy, orderAsc);
-    }
-
-    private Pagination<LocationModel> getAllLocations(Integer page, Integer size, String orderBy, boolean orderAsc){
-        List<LocationModel> locationModelList = locationPersistencePort.getAllLocations();
-
-        return paginationOrderBy(locationModelList, page, size, orderBy, orderAsc);
-    }
-
-    private Pagination<LocationModel> getLocationsByNameLocation(String nameLocation, Integer page, Integer size, String orderBy, boolean orderAsc){
-
-        List<LocationModel> locationListFound;
-        if (departmentPersistencePort.findByName(nameLocation.toUpperCase()).isPresent()){
-            locationListFound = locationPersistencePort.findAllByDepartmentName(nameLocation.toUpperCase());
-        } else {
-            locationListFound = locationPersistencePort.findAllByCityName(nameLocation.toUpperCase());
-        }
-
-        return paginationOrderBy(locationListFound, page, size, orderBy, orderAsc);
-    }
-
-    private Pagination<LocationModel> paginationOrderBy(List<LocationModel> locationModelList, Integer page, Integer size, String orderBy, boolean orderAsc){
-
-        Comparator<LocationModel> comparator;
-        if (orderBy.equalsIgnoreCase(PaginationConstants.CITY_ORDER_BY_PAGINATION)) {
-            comparator = Comparator.comparing(locationModel -> locationModel.getCityModel().getName());
-        } else if (orderBy.equalsIgnoreCase(PaginationConstants.DEPARTMENT_ORDER_BY_PAGINATION)){
-            comparator = Comparator.comparing(locationModel -> locationModel.getCityModel().getDepartmentModel().getName());
-        } else {
-            throw new LocationOrderNotFoundException();
-        }
-
-        return new Pagination<>(locationModelList, page, size, comparator, orderAsc);
     }
 }

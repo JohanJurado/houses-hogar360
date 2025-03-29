@@ -8,6 +8,7 @@ public interface IHousePersistencePort {
 
     void save(HouseModel houseModel);
     List<HouseModel> findHousesByFilters(
+            String neighborhood,
             String nameCity,
             String nameDepartment,
             String nameCategory,

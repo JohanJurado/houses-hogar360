@@ -6,15 +6,15 @@ import com.pragma.hogar360_microservice_house.domain.ports.in.IHouseServicePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ICategoryPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.IHousePersistencePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersistencePort;
-import com.pragma.hogar360_microservice_house.domain.util.constants.StateHousesConstants;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
-import com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants;
-import com.pragma.hogar360_microservice_house.domain.util.validations.GlobalValidations;
 
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.pragma.hogar360_microservice_house.domain.util.constants.StateHousesConstants.PAUSED_STATE_HOUSE;
+import static com.pragma.hogar360_microservice_house.domain.util.constants.StateHousesConstants.PUBLISHED_STATE_HOUSE;
+import static com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants.*;
 import static com.pragma.hogar360_microservice_house.domain.util.validations.HouseValidation.toUpperStringHouseAttributes;
 import static com.pragma.hogar360_microservice_house.domain.util.validations.HouseValidation.validationByHouseAttributes;
 
@@ -35,55 +35,72 @@ public class HouseUseCase implements IHouseServicePort {
         validationByHouseAttributes(houseModel);
         toUpperStringHouseAttributes(houseModel);
 
-        List<LocationModel> cityModelList = locationPersistencePort.findAllByCityName(houseModel.getCityModel().getName().toUpperCase());
-
-        if (cityModelList.isEmpty()){
-            throw new CityNotFoundException();
-        }
-        DepartmentModel departmentModel = locationPersistencePort.findDepartmentByName(houseModel.getCityModel().getDepartmentModel().getName().toUpperCase()).orElseThrow(DepartmentNotFoundException::new);
-
-        if (cityModelList.getFirst().getDepartmentModel().getName().equalsIgnoreCase(departmentModel.getName())){
-            houseModel.setCityModel(cityModelList.getFirst());
-        } else {
-            throw new LocationNotFoundException();
-        }
-
-        CategoryModel categoryModel = categoryPersistencePort.findByName(houseModel.getCategoryModel().getName().toUpperCase()).orElseThrow(CategoryNotFoundException::new);
-        houseModel.setCategoryModel(categoryModel);
-
-        houseModel.setPublicationDate(LocalDate.now());
-        if (houseModel.getPublicationDate().isAfter(houseModel.getActivePublicationDate()) || houseModel.getPublicationDate().isEqual(houseModel.getActivePublicationDate())){
-            houseModel.setPublicationStatus(StateHousesConstants.PUBLISHED_STATE_HOUSE);
-        } else {
-            houseModel.setPublicationStatus(StateHousesConstants.PAUSED_STATE_HOUSE);
-        }
+        setDataHouse(houseModel);
 
         housePersistencePort.save(houseModel);
     }
 
     @Override
-    public Pagination<HouseModel> getHouses(String nameCity, String nameDepartment, String nameCategory, Long bedroomCount,
+    public Pagination<HouseModel> getHouses(String neighborhood, String nameCity, String nameDepartment, String nameCategory, Long bedroomCount,
                                             Long bathroomCount, Double minPrice, Double maxPrice, Integer page, Integer size,
                                             String orderBy, boolean orderAsc) {
-        List<HouseModel> houseModelFilterList = housePersistencePort.findHousesByFilters(nameCity, nameDepartment, nameCategory, bedroomCount, bathroomCount, minPrice, maxPrice);
+        List<HouseModel> houseModelFilterList = housePersistencePort.findHousesByFilters(neighborhood, nameCity, nameDepartment, nameCategory, bedroomCount, bathroomCount, minPrice, maxPrice);
+
+        return new Pagination<>(houseModelFilterList, page, size, defineHouseAttributeToSort(orderBy), orderAsc);
+    }
+
+    // get houses
+    private Comparator<HouseModel> defineHouseAttributeToSort(String orderBy){
 
         Comparator<HouseModel> comparator;
-        if (orderBy.equalsIgnoreCase(PaginationConstants.PRICE_ORDER_BY_PAGINATION)){
+        if (orderBy.equalsIgnoreCase(PRICE_ORDER_BY_PAGINATION)){
             comparator = Comparator.comparing(HouseModel::getPrice);
-        } else if (orderBy.equalsIgnoreCase(PaginationConstants.DEPARTMENT_ORDER_BY_PAGINATION)){
-            comparator = Comparator.comparing(houseModel -> houseModel.getCityModel().getDepartmentModel().getName());
-        } else if (orderBy.equalsIgnoreCase(PaginationConstants.CITY_ORDER_BY_PAGINATION)) {
-            comparator = Comparator.comparing(houseModel -> houseModel.getCityModel().getName());
-        } else if (orderBy.equalsIgnoreCase(PaginationConstants.BATHROOM_ORDER_BY_PAGINATION)) {
+        } else if (orderBy.equalsIgnoreCase(DEPARTMENT_ORDER_BY_PAGINATION)){
+            comparator = Comparator.comparing(houseModel -> houseModel.getLocationModel().getCityModel().getDepartmentModel().getName());
+        } else if (orderBy.equalsIgnoreCase(CITY_ORDER_BY_PAGINATION)) {
+            comparator = Comparator.comparing(houseModel -> houseModel.getLocationModel().getCityModel().getName());
+        } else if (orderBy.equalsIgnoreCase(BATHROOM_ORDER_BY_PAGINATION)) {
             comparator = Comparator.comparing(HouseModel::getBathroomCount);
-        }  else if (orderBy.equalsIgnoreCase(PaginationConstants.BEDROOM_ORDER_BY_PAGINATION)) {
+        }  else if (orderBy.equalsIgnoreCase(BEDROOM_ORDER_BY_PAGINATION)) {
             comparator = Comparator.comparing(HouseModel::getBedroomCount);
-        } else if (orderBy.equalsIgnoreCase(PaginationConstants.CATEGORY_ORDER_BY_PAGINATION)) {
+        } else if (orderBy.equalsIgnoreCase(CATEGORY_ORDER_BY_PAGINATION)) {
             comparator = Comparator.comparing(houseModel -> houseModel.getCategoryModel().getName());
         } else {
             throw new HouseOrderNotFoundException();
         }
 
-        return new Pagination<>(houseModelFilterList, page, size, comparator, orderAsc);
+        return comparator;
+    }
+
+    // save house
+    private void setDataHouse(HouseModel houseModel){
+        setLocationModelInHouseModel(houseModel);
+        setCategoryModelInHouseModel(houseModel);
+        houseModel.setPublicationDate(LocalDate.now());
+
+        if (houseModel.getPublicationDate().isAfter(houseModel.getActivePublicationDate()) ||
+            houseModel.getPublicationDate().isEqual(houseModel.getActivePublicationDate())
+        ){
+            houseModel.setPublicationStatus(PUBLISHED_STATE_HOUSE);
+        } else {
+            houseModel.setPublicationStatus(PAUSED_STATE_HOUSE);
+        }
+    }
+
+    private void setLocationModelInHouseModel(HouseModel houseModel){
+        houseModel.setLocationModel(
+                locationPersistencePort.findByNeighborhoodAndCityNameAndDepartmentName(
+                        houseModel.getLocationModel().getNeighborhood(),
+                        houseModel.getLocationModel().getCityModel().getName(),
+                        houseModel.getLocationModel().getCityModel().getDepartmentModel().getName()
+                ).orElseThrow(LocationNotFoundException::new)
+        );
+    }
+
+    private void setCategoryModelInHouseModel(HouseModel houseModel){
+        houseModel.setCategoryModel(
+                categoryPersistencePort.findByName(houseModel.getCategoryModel().getName())
+                .orElseThrow(CategoryNotFoundException::new)
+        );
     }
 }

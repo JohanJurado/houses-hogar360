@@ -14,7 +14,7 @@ public class HouseModel {
     private LocalDate publicationDate;
     private String publicationStatus;
 
-    private CityModel cityModel;
+    private LocationModel locationModel;
     private CategoryModel categoryModel;
 
     public HouseModel() {
@@ -93,12 +93,12 @@ public class HouseModel {
         this.publicationStatus = publicationStatus;
     }
 
-    public CityModel getCityModel() {
-        return cityModel;
+    public LocationModel getLocationModel() {
+        return locationModel;
     }
 
-    public void setCityModel(CityModel cityModel) {
-        this.cityModel = cityModel;
+    public void setLocationModel(LocationModel locationModel) {
+        this.locationModel = locationModel;
     }
 
     public CategoryModel getCategoryModel() {

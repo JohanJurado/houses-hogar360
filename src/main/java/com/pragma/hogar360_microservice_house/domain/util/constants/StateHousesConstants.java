@@ -1,8 +1,10 @@
 package com.pragma.hogar360_microservice_house.domain.util.constants;
 
+import static com.pragma.hogar360_microservice_house.domain.util.constants.GlobalConstants.UTILITY_CLASS_MESSAGE;
+
 public class StateHousesConstants {
     private StateHousesConstants() {
-        throw new IllegalStateException(DomainConstants.UTILITY_CLASS_MESSAGE);
+        throw new IllegalStateException(UTILITY_CLASS_MESSAGE);
     }
 
     public static final String PUBLISHED_STATE_HOUSE = "PUBLISHED";

@@ -9,9 +9,8 @@ public interface ILocationPersistencePort {
 
     void save(LocationModel locationModel);
     Optional<LocationModel> findByNeighborhoodAndCityId(String neighborhood, Long cityId);
+    Optional<LocationModel> findByNeighborhoodAndCityNameAndDepartmentName(String neighborhood, String nameCity, String nameDepartment);
 
-    List<LocationModel> getAllLocations();
-    List<LocationModel> findAllByDepartmentName(String departmentName);
-    List<LocationModel> findAllByCityName(String cityName);
+    List<LocationModel> findAllByCityOrDepartment(String nameLocation);
 }
 

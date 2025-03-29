@@ -10,8 +10,9 @@ import java.util.List;
 public interface IHouseRepository extends JpaRepository<HouseEntity, Long> {
 
     @Query("SELECT h FROM HouseEntity h " +
-            "WHERE (:nameCity IS NULL OR h.cityEntity.name LIKE UPPER(CONCAT('%', :nameCity, '%'))) " +
-            "AND (:nameDepartment IS NULL OR h.cityEntity.departmentEntity.name LIKE UPPER(CONCAT('%', :nameDepartment, '%'))) " +
+            "WHERE (:nameCity IS NULL OR h.locationEntity.cityEntity.name LIKE UPPER(CONCAT('%', :nameCity, '%'))) " +
+            "AND (:neighborhood IS NULL OR h.locationEntity.neighborhood LIKE UPPER(CONCAT('%', :neighborhood, '%')))" +
+            "AND (:nameDepartment IS NULL OR h.locationEntity.cityEntity.departmentEntity.name LIKE UPPER(CONCAT('%', :nameDepartment, '%'))) " +
             "AND (:nameCategory IS NULL OR h.categoryEntity.name LIKE UPPER(CONCAT('%', :nameCategory, '%'))) " +
             "AND (:bedroomCount IS NULL OR h.bedroomCount = :bedroomCount) " +
             "AND (:bathroomCount IS NULL OR h.bathroomCount = :bathroomCount) " +
@@ -20,6 +21,7 @@ public interface IHouseRepository extends JpaRepository<HouseEntity, Long> {
             "AND h.activePublicationDate <= CURRENT_DATE " +
             "AND h.publicationStatus = 'PUBLISHED'")
     List<HouseEntity> findHousesByFilters(
+            @Param("neighborhood") String neighborhood,
             @Param("nameCity") String nameCity,
             @Param("nameDepartment") String nameDepartment,
             @Param("nameCategory") String nameCategory,

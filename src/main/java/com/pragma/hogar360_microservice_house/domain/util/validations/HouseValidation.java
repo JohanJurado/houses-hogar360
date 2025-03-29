@@ -1,12 +1,10 @@
 package com.pragma.hogar360_microservice_house.domain.util.validations;
 
 import com.pragma.hogar360_microservice_house.domain.exceptions.*;
-import com.pragma.hogar360_microservice_house.domain.model.CategoryModel;
 import com.pragma.hogar360_microservice_house.domain.model.HouseModel;
 
-import static com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants.UTILITY_CLASS_MESSAGE;
-import static com.pragma.hogar360_microservice_house.domain.util.validations.GlobalValidations.validationByAttributeIsNullOrBlank;
-import static com.pragma.hogar360_microservice_house.domain.util.validations.GlobalValidations.validationByAttributeLObjectIsNullOrBlank;
+import static com.pragma.hogar360_microservice_house.domain.util.constants.GlobalConstants.UTILITY_CLASS_MESSAGE;
+import static com.pragma.hogar360_microservice_house.domain.util.validations.GlobalValidations.*;
 
 public class HouseValidation {
 
@@ -22,13 +20,20 @@ public class HouseValidation {
         validationByAttributeLObjectIsNullOrBlank(houseModel.getPrice(), new HousePriceCannotBeEmptyException());
         validationByAttributeLObjectIsNullOrBlank(houseModel.getActivePublicationDate(), new HouseActivePublicationDateCannotBeEmptyException());
 
-        validationByAttributeIsNullOrBlank(houseModel.getCityModel().getName(), new HouseLocationCannotBeEmptyException());
-        validationByAttributeIsNullOrBlank(houseModel.getCityModel().getDepartmentModel().getName(), new HouseLocationCannotBeEmptyException());
+        validationByAttributeIsNullOrBlank(houseModel.getLocationModel().getNeighborhood(), new LocationNeighborhoodCannotBeEmptyException());
+        validationByAttributeIsNullOrBlank(houseModel.getLocationModel().getCityModel().getName(), new HouseLocationCannotBeEmptyException());
+        validationByAttributeIsNullOrBlank(houseModel.getLocationModel().getCityModel().getDepartmentModel().getName(), new HouseLocationCannotBeEmptyException());
         validationByAttributeIsNullOrBlank(houseModel.getCategoryModel().getName(), new HouseCategoryCannotBeEmptyException());
     }
 
     public static void toUpperStringHouseAttributes(HouseModel houseModel){
-        houseModel.setName(houseModel.getName().toUpperCase());
-        houseModel.setDescription(houseModel.getDescription().toUpperCase());
+        houseModel.setName(normalizeToUpper(houseModel.getName()));
+        houseModel.setDescription(normalizeToUpper(houseModel.getDescription()));
+        houseModel.getCategoryModel().setName(normalizeToUpper(houseModel.getCategoryModel().getName()));
+        houseModel.getLocationModel().setNeighborhood(normalizeToUpper(houseModel.getLocationModel().getNeighborhood()));
+        houseModel.getLocationModel().getCityModel().setName(normalizeToUpper(houseModel.getLocationModel().getCityModel().getName()));
+        houseModel.getLocationModel().getCityModel().getDepartmentModel().setName(
+                normalizeToUpper(houseModel.getLocationModel().getCityModel().getDepartmentModel().getName())
+        );
     }
 }

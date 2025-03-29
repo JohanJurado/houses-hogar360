@@ -1,11 +1,12 @@
 package com.pragma.hogar360_microservice_house.domain.util.validations;
 
+
 import com.pragma.hogar360_microservice_house.domain.exceptions.*;
 import com.pragma.hogar360_microservice_house.domain.model.LocationModel;
 
 import static com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants.*;
-import static com.pragma.hogar360_microservice_house.domain.util.validations.GlobalValidations.validationByAttributeIsNullOrBlank;
-import static com.pragma.hogar360_microservice_house.domain.util.validations.GlobalValidations.validationByLimitCharacters;
+import static com.pragma.hogar360_microservice_house.domain.util.constants.GlobalConstants.UTILITY_CLASS_MESSAGE;
+import static com.pragma.hogar360_microservice_house.domain.util.validations.GlobalValidations.*;
 
 public class LocationValidation {
 
@@ -19,40 +20,45 @@ public class LocationValidation {
     }
 
     public static void toUpperStringLocationAttributes(LocationModel locationModel) {
-        locationModel.getCityModel().setName(locationModel.getCityModel().getName().toUpperCase());
-        locationModel.getCityModel().setDescription(locationModel.getCityModel().getDescription().toUpperCase());
-        locationModel.getCityModel().getDepartmentModel().setName(locationModel.getCityModel().getDepartmentModel().getName().toUpperCase());
+        locationModel.setNeighborhood(normalizeToUpper(locationModel.getNeighborhood()));
+
+        locationModel.getCityModel().setName(normalizeToUpper(locationModel.getCityModel().getName()));
+        locationModel.getCityModel().setDescription(normalizeToUpper(locationModel.getCityModel().getDescription()));
+        locationModel.getCityModel().getDepartmentModel().setName(normalizeToUpper(locationModel.getCityModel().getDepartmentModel().getName()));
         locationModel.getCityModel().getDepartmentModel().setDescription(
-                locationModel.getCityModel().getDepartmentModel().getDescription().toUpperCase()
+                normalizeToUpper(locationModel.getCityModel().getDepartmentModel().getDescription())
         );
     }
 
     private static void validationEmptyAttributes(LocationModel locationModel){
+        validationByAttributeIsNullOrBlank(locationModel.getNeighborhood(), new LocationNeighborhoodCannotBeEmptyException());
+
         validationByAttributeIsNullOrBlank(locationModel.getCityModel().getName(), new CityNameCannotBeEmptyException());
         validationByAttributeIsNullOrBlank(locationModel.getCityModel().getDescription(), new CityDescriptionCannotBeEmptyException());
 
         validationByAttributeIsNullOrBlank(locationModel.getCityModel().getDepartmentModel().getName(), new DepartmentNameCannotBeEmptyException());
-        validationByAttributeIsNullOrBlank(locationModel.getCityModel().getDepartmentModel().getDescription(), new DepartmentDescriptionCannotBeEmptyException());
-
-        validationByAttributeIsNullOrBlank(locationModel.getNeighborhood(), new LocationNeighborhoodCannotBeEmptyException());
+        validationByAttributeIsNullOrBlank(
+                locationModel.getCityModel().getDepartmentModel().getDescription(),
+                new DepartmentDescriptionCannotBeEmptyException()
+        );
     }
 
     private static void validationLimitCharacters(LocationModel locationModel){
         validationByLimitCharacters(
-                locationModel.getCityModel().getName(), MAX_NAME_SIZE_LOCATION, new LocationNameMaxSizeExceedException()
+                locationModel.getCityModel().getName(), MAX_NAME_SIZE_CITY, new LocationNameMaxSizeExceedException()
         );
         validationByLimitCharacters(
-                locationModel.getCityModel().getDescription(), MAX_DESCRIPTION_SIZE_LOCATION,
+                locationModel.getCityModel().getDescription(), MAX_DESCRIPTION_SIZE_CITY,
                 new LocationDescriptionMaxSizeExceedException()
         );
 
         validationByLimitCharacters(
-                locationModel.getCityModel().getDepartmentModel().getName(), MAX_NAME_SIZE_LOCATION,
+                locationModel.getCityModel().getDepartmentModel().getName(), MAX_NAME_SIZE_DEPARTMENT,
                 new LocationNameMaxSizeExceedException()
         );
         validationByLimitCharacters(
                 locationModel.getCityModel().getDepartmentModel().getDescription(),
-                MAX_DESCRIPTION_SIZE_LOCATION, new LocationDescriptionMaxSizeExceedException()
+                MAX_DESCRIPTION_SIZE_DEPARTMENT, new LocationDescriptionMaxSizeExceedException()
         );
 
         validationByLimitCharacters(

@@ -29,7 +29,7 @@ public class CategoryPersistenceAdapter implements ICategoryPersistencePort {
     }
 
     @Override
-    public List<CategoryModel> getAllCategories() {
-        return categoryEntityMapper.entityListToModelList(categoryRepository.findAll());
+    public List<CategoryModel> findAllByName(String name) {
+        return categoryEntityMapper.entityListToModelList(categoryRepository.findAllByNameContaining(name));
     }
 }

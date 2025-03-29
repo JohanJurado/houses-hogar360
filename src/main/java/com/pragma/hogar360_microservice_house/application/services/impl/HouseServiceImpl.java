@@ -27,13 +27,13 @@ public class HouseServiceImpl implements IHouseService {
     }
 
     @Override
-    public Pagination<HouseResponse> getHouses(String nameCity, String nameDepartment, String nameCategory, Long bedroomCount,
+    public Pagination<HouseResponse> getHouses(String neighborhood, String nameCity, String nameDepartment, String nameCategory, Long bedroomCount,
                                                Long bathroomCount, Double minPrice, Double maxPrice,
                                                Integer page, Integer size, String orderBy, boolean orderAsc) {
         return houseDtoMapper.modelPaginationToResponsePagination(
                 houseServicePort.getHouses(
-                        nameCity, nameDepartment, nameCategory, bedroomCount, bathroomCount,
-                        minPrice, maxPrice, page, size, orderBy, orderAsc
+                        neighborhood, nameCity, nameDepartment, nameCategory, bedroomCount,
+                        bathroomCount, minPrice, maxPrice, page, size, orderBy, orderAsc
                 )
         );
     }
