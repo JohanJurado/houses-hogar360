@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public interface IHouseEntityMapper {
@@ -15,6 +16,10 @@ public interface IHouseEntityMapper {
     @Mapping(target = "locationModel.cityModel.departmentModel", source="locationEntity.cityEntity.departmentEntity")
     @Mapping(target = "categoryModel", source="categoryEntity")
     HouseModel entityToModel(HouseEntity houseEntity);
+
+    default Optional<HouseModel> entityOptionalToModelOptional(Optional<HouseEntity> houseEntityOptional){
+        return houseEntityOptional.map(this::entityToModel);
+    }
 
     @Mapping(target = "locationEntity", source="locationModel")
     @Mapping(target = "locationEntity.cityEntity", source="locationModel.cityModel")

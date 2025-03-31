@@ -1,6 +1,7 @@
 package com.pragma.hogar360_microservice_house.infraestructure.endpoints.rest;
 
 import com.pragma.hogar360_microservice_house.application.dtos.request.SaveHouseRequest;
+import com.pragma.hogar360_microservice_house.application.dtos.request.filters.HouseFilterRequest;
 import com.pragma.hogar360_microservice_house.application.dtos.response.HouseResponse;
 import com.pragma.hogar360_microservice_house.application.dtos.response.SaveDtoResponses;
 import com.pragma.hogar360_microservice_house.application.services.IHouseService;
@@ -71,21 +72,14 @@ public class HouseController {
     })
     @GetMapping("/")
     public ResponseEntity<Pagination<HouseResponse>> getHouses(
-            @RequestParam(required = false) String neighborhood,
-            @RequestParam(required = false) String nameCity,
-            @RequestParam(required = false) String nameDepartment,
-            @RequestParam(required = false) String nameCategory,
-            @RequestParam(required = false) Long bedroomCount,
-            @RequestParam(required = false) Long bathroomCount,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice,
+            @ModelAttribute HouseFilterRequest filterRequest,
             @RequestParam(defaultValue = PAGE_DEFAULT_PAGINATION) Integer page,
             @RequestParam(defaultValue = SIZE_DEFAULT_PAGINATION) Integer size,
             @RequestParam(defaultValue = ORDER_BY_HOUSE_DEFAULT_PAGINATION) String orderBy,
             @RequestParam(defaultValue = ORDER_ASC_DEFAULT_PAGINATION) boolean orderAsc
     ){
         Pagination<HouseResponse> response = houseService.getHouses(
-                neighborhood, nameCity, nameDepartment, nameCategory, bedroomCount, bathroomCount, minPrice, maxPrice, page, size, orderBy, orderAsc
+                filterRequest, page, size, orderBy, orderAsc
         );
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

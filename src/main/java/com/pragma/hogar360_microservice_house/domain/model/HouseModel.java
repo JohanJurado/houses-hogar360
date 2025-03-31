@@ -2,6 +2,9 @@ package com.pragma.hogar360_microservice_house.domain.model;
 
 import java.time.LocalDate;
 
+import static com.pragma.hogar360_microservice_house.domain.util.constants.StateHousesConstants.PAUSED_STATE_HOUSE;
+import static com.pragma.hogar360_microservice_house.domain.util.constants.StateHousesConstants.PUBLISHED_STATE_HOUSE;
+
 public class HouseModel {
 
     private Long id;
@@ -91,6 +94,12 @@ public class HouseModel {
 
     public void setPublicationStatus(String publicationStatus) {
         this.publicationStatus = publicationStatus;
+    }
+
+    public void calculateInitialStatus() {
+        this.publicationStatus = (publicationDate.isBefore(activePublicationDate))
+                ? PAUSED_STATE_HOUSE
+                : PUBLISHED_STATE_HOUSE;
     }
 
     public LocationModel getLocationModel() {

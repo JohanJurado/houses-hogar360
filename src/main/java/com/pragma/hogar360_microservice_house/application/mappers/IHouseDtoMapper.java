@@ -1,8 +1,10 @@
 package com.pragma.hogar360_microservice_house.application.mappers;
 
 import com.pragma.hogar360_microservice_house.application.dtos.request.SaveHouseRequest;
+import com.pragma.hogar360_microservice_house.application.dtos.request.filters.HouseFilterRequest;
 import com.pragma.hogar360_microservice_house.application.dtos.response.HouseResponse;
 import com.pragma.hogar360_microservice_house.domain.model.HouseModel;
+import com.pragma.hogar360_microservice_house.domain.model.filters.HouseFilterModel;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,6 +21,8 @@ public interface IHouseDtoMapper {
     @Mapping(target = "locationModel.cityModel.departmentModel.name", source="departmentName")
     @Mapping(target = "categoryModel.name", source="categoryName")
     HouseModel requestToModel(SaveHouseRequest saveHouseRequest);
+
+    HouseFilterModel requestToModelFilter(HouseFilterRequest houseFilterRequest);
 
     @Mapping(target = "neighborhood", source="locationModel.neighborhood")
     @Mapping(target = "cityName", source="locationModel.cityModel.name")

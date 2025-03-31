@@ -3,10 +3,12 @@ package com.pragma.hogar360_microservice_house.infraestructure.configurations.be
 import com.pragma.hogar360_microservice_house.domain.ports.in.ICategoryServicePort;
 import com.pragma.hogar360_microservice_house.domain.ports.in.IHouseServicePort;
 import com.pragma.hogar360_microservice_house.domain.ports.in.ILocationServicePort;
+import com.pragma.hogar360_microservice_house.domain.ports.in.events.IUpdateHouseStatusServicePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.*;
 import com.pragma.hogar360_microservice_house.domain.usecases.CategoryUseCase;
 import com.pragma.hogar360_microservice_house.domain.usecases.HouseUseCase;
 import com.pragma.hogar360_microservice_house.domain.usecases.LocationUseCase;
+import com.pragma.hogar360_microservice_house.domain.usecases.events.UpdateHousesStatusUseCase;
 import com.pragma.hogar360_microservice_house.infraestructure.adapters.persistence.*;
 import com.pragma.hogar360_microservice_house.infraestructure.mappers.*;
 import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.*;
@@ -78,5 +80,11 @@ public class BeanConfiguration {
     @Bean
     public IHousePersistencePort housePersistencePort(){
         return new HousePersistenceAdapter(houseEntityMapper, houseRepository);
+    }
+
+    // event - house
+    @Bean
+    public IUpdateHouseStatusServicePort updateHouseStatusServicePort(){
+        return new UpdateHousesStatusUseCase(housePersistencePort());
     }
 }

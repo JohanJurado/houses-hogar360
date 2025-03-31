@@ -23,4 +23,5 @@ public final class DomainConstants {
     public static final String VALIDATIONS_STR_FROM_NULL_TO_BLANK = "";
     public static final String VALIDATIONS_STR_REGEX = "\\p{M}";
     public static final String VALIDATIONS_STR_REGEX_TO_BLANK = "";
+    public static final Integer ONE_MONTH = 1;
 }

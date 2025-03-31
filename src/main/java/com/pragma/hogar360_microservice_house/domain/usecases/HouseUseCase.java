@@ -2,6 +2,7 @@ package com.pragma.hogar360_microservice_house.domain.usecases;
 
 import com.pragma.hogar360_microservice_house.domain.exceptions.*;
 import com.pragma.hogar360_microservice_house.domain.model.*;
+import com.pragma.hogar360_microservice_house.domain.model.filters.HouseFilterModel;
 import com.pragma.hogar360_microservice_house.domain.ports.in.IHouseServicePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ICategoryPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.IHousePersistencePort;
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.pragma.hogar360_microservice_house.domain.util.constants.StateHousesConstants.PAUSED_STATE_HOUSE;
 import static com.pragma.hogar360_microservice_house.domain.util.constants.StateHousesConstants.PUBLISHED_STATE_HOUSE;
 import static com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants.*;
 import static com.pragma.hogar360_microservice_house.domain.util.validations.HouseValidation.toUpperStringHouseAttributes;
@@ -41,10 +41,9 @@ public class HouseUseCase implements IHouseServicePort {
     }
 
     @Override
-    public Pagination<HouseModel> getHouses(String neighborhood, String nameCity, String nameDepartment, String nameCategory, Long bedroomCount,
-                                            Long bathroomCount, Double minPrice, Double maxPrice, Integer page, Integer size,
+    public Pagination<HouseModel> getHouses(HouseFilterModel filterModel, Integer page, Integer size,
                                             String orderBy, boolean orderAsc) {
-        List<HouseModel> houseModelFilterList = housePersistencePort.findHousesByFilters(neighborhood, nameCity, nameDepartment, nameCategory, bedroomCount, bathroomCount, minPrice, maxPrice);
+        List<HouseModel> houseModelFilterList = housePersistencePort.findHousesByFilters(filterModel, PUBLISHED_STATE_HOUSE);
 
         return new Pagination<>(houseModelFilterList, page, size, defineHouseAttributeToSort(orderBy), orderAsc);
     }
@@ -76,15 +75,9 @@ public class HouseUseCase implements IHouseServicePort {
     private void setDataHouse(HouseModel houseModel){
         setLocationModelInHouseModel(houseModel);
         setCategoryModelInHouseModel(houseModel);
-        houseModel.setPublicationDate(LocalDate.now());
 
-        if (houseModel.getPublicationDate().isAfter(houseModel.getActivePublicationDate()) ||
-            houseModel.getPublicationDate().isEqual(houseModel.getActivePublicationDate())
-        ){
-            houseModel.setPublicationStatus(PUBLISHED_STATE_HOUSE);
-        } else {
-            houseModel.setPublicationStatus(PAUSED_STATE_HOUSE);
-        }
+        houseModel.setPublicationDate(LocalDate.now());
+        houseModel.calculateInitialStatus();
     }
 
     private void setLocationModelInHouseModel(HouseModel houseModel){

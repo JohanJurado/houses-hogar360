@@ -229,4 +229,12 @@ public class ControllerAdvisor {
                 )
         );
     }
+
+    @ExceptionHandler(HouseLimitActivePublicationDateExceedException.class)
+    public ResponseEntity<ExceptionResponse> houseLimitActivePublicationDateExceedException(HouseLimitActivePublicationDateExceedException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.HOUSE_LIMIT_ACTIVE_PUBLICATION_DATE_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
 }
