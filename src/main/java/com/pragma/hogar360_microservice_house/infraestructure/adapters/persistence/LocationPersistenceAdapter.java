@@ -1,12 +1,9 @@
 package com.pragma.hogar360_microservice_house.infraestructure.adapters.persistence;
 
-import com.pragma.hogar360_microservice_house.domain.model.CityModel;
-import com.pragma.hogar360_microservice_house.domain.model.DepartmentModel;
+import com.pragma.hogar360_microservice_house.domain.model.LocationModel;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersistencePort;
-import com.pragma.hogar360_microservice_house.infraestructure.entities.CityEntity;
 import com.pragma.hogar360_microservice_house.infraestructure.mappers.ILocationEntityMapper;
-import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.ICityRepository;
-import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.IDepartmentRepository;
+import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.ILocationRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,51 +11,34 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class LocationPersistenceAdapter implements ILocationPersistencePort {
 
-    private final ICityRepository cityRepository;
-    private final IDepartmentRepository departmentRepository;
+    private final ILocationRepository locationRepository;
     private final ILocationEntityMapper locationEntityMapper;
 
     @Override
-    public DepartmentModel saveDepartment(DepartmentModel departmentModel) {
-        return locationEntityMapper.entityToModelDepartment(departmentRepository.save(locationEntityMapper.modelToEntityDepartment(departmentModel)));
+    public void save(LocationModel locationModel) {
+        locationRepository.save(locationEntityMapper.modelToEntity(locationModel));
     }
 
     @Override
-    public Optional<DepartmentModel> findDepartmentByName(String nameDepartment) {
-        return locationEntityMapper.entityOptionalToModelOptionalDepartment(departmentRepository.findByName(nameDepartment));
+    public Optional<LocationModel> findByNeighborhoodAndCityId(String neighborhood, Long cityId) {
+        return locationEntityMapper.entityOptionalToModelOptional(locationRepository.findByNeighborhoodAndCityEntityId(neighborhood, cityId));
     }
 
     @Override
-    public List<DepartmentModel> getAllDepartments() {
-        return locationEntityMapper.entityListToModelListDepartment(departmentRepository.findAll());
+    public Optional<LocationModel> findByNeighborhoodAndCityNameAndDepartmentName(String neighborhood, String nameCity, String nameDepartment) {
+        return locationEntityMapper.entityOptionalToModelOptional(
+                locationRepository.findByNeighborhoodAndCityEntityNameAndCityEntityDepartmentEntityName(neighborhood, nameCity, nameDepartment)
+        );
     }
 
     @Override
-    public void saveCity(CityModel cityModel) {
-        cityRepository.save(locationEntityMapper.modelToEntityCity(cityModel));
-    }
-
-    @Override
-    public List<CityModel> findCityByName(String nameCity) {
-        return locationEntityMapper.entityListToModelListCity(cityRepository.findByName(nameCity));
-    }
-
-    @Override
-    public List<CityModel> getAllCities() {
-        return locationEntityMapper.entityListToModelListCity(cityRepository.findAll());
-
-    }
-
-    @Override
-    public List<CityModel> findAllByDepartmentName(String nameDepartment) {
-        List<CityEntity> cityEntityList = cityRepository.findByDepartmentEntityName(nameDepartment);
-        return cityEntityList.stream()
-                .map(locationEntityMapper::entityToModelCity)
-                .toList();
+    public List<LocationModel> findAllByCityOrDepartment(String nameLocation) {
+        return locationEntityMapper.entityListToModelList(locationRepository.findByCityOrDepartment(nameLocation));
     }
 }

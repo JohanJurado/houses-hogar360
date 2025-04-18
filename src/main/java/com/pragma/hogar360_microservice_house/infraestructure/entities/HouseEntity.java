@@ -21,8 +21,8 @@ public class HouseEntity {
     private String publicationStatus;
 
     @ManyToOne
-    @JoinColumn(name = "city_id")
-    private CityEntity cityEntity;
+    @JoinColumn(name = "location_id")
+    private LocationEntity locationEntity;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -104,12 +104,12 @@ public class HouseEntity {
         this.publicationStatus = publicationStatus;
     }
 
-    public CityEntity getCityEntity() {
-        return cityEntity;
+    public LocationEntity getLocationEntity() {
+        return locationEntity;
     }
 
-    public void setCityEntity(CityEntity cityEntity) {
-        this.cityEntity = cityEntity;
+    public void setLocationEntity(LocationEntity locationEntity) {
+        this.locationEntity = locationEntity;
     }
 
     public CategoryEntity getCategoryEntity() {

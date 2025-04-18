@@ -1,4 +1,4 @@
-package com.pragma.hogar360_microservice_house.infraestructure.exceptionshandler;
+package com.pragma.hogar360_microservice_house.infraestructure.utils.constants;
 
 public class ExceptionConstants {
     private ExceptionConstants(){}
@@ -15,14 +15,17 @@ public class ExceptionConstants {
     public static final String LOCATION_EXIST_MESSAGE = "Location already exists";
     public static final String LOCATION_NAME_MAX_SIZE_MESSAGE = "The name of location cannot exceed 50 characters";
     public static final String LOCATION_DESCRIPTION_MAX_SIZE_MESSAGE = "The description of location cannot exceed 120 characters";
-    public static final String LOCATION_NOT_FOUND_MESSAGE = "Location not found";
     public static final String LOCATION_ORDER_NOT_FOUND_MESSAGE = "Order location not found";
+    public static final String LOCATION_NOT_FOUND_MESSAGE = "Location not found";
+
     public static final String LOCATION_CITY_NAME_CANNOT_BE_NULL_MESSAGE = "The name of city cannot be null or blank";
     public static final String LOCATION_CITY_DESCRIPTION_CANNOT_BE_NULL_MESSAGE = "The description of city cannot be null or blank";
+
     public static final String LOCATION_DEPARTMENT_NAME_CANNOT_BE_NULL_MESSAGE = "The name of department cannot be null or blank";
     public static final String LOCATION_DEPARTMENT_DESCRIPTION_CANNOT_BE_NULL_MESSAGE = "The description of department cannot be null or blank";
-    public static final String LOCATION_CITY_NOT_FOUND_MESSAGE = "City not found";
-    public static final String LOCATION_DEPARTMENT_NOT_FOUND_MESSAGE = "Department not found";
+
+    public static final String LOCATION_NEIGHBORHOOD_CANNOT_BE_NULL_MESSAGE = "The neighborhood of location cannot be null or blank";
+    public static final String LOCATION_NEIGHBORHOOD_MAX_SIZE_MESSAGE = "The neighborhood of location cannot exceed 120 characters";
 
     public static final String HOUSE_ACTIVE_PUBLICATION_DATE_CANNOT_BE_NULL_MESSAGE = "The active publication date of house cannot be null or blank";
     public static final String HOUSE_BATHROOM_COUNT_CANNOT_BE_NULL_MESSAGE = "The bathroom count of house cannot be null or blank";
@@ -33,4 +36,19 @@ public class ExceptionConstants {
     public static final String HOUSE_NAME_CANNOT_BE_NULL_MESSAGE = "The name of house cannot be null or blank";
     public static final String HOUSE_PRICE_CANNOT_BE_NULL_MESSAGE = "The price of house cannot be null or blank";
     public static final String HOUSE_ORDER_NOT_FOUND_MESSAGE = "Order house not found";
+    public static final String HOUSE_LIMIT_ACTIVE_PUBLICATION_DATE_MESSAGE = "The active publication date cannot be higher than the current date";
+
+    // token validation
+    public static final String TOKEN_EXPIRED_MESSAGE = "Token has expired";
+    public static final String TOKEN_MALFORMED_MESSAGE = "Token is malformed";
+    public static final String TOKEN_INVALID_MESSAGE = "Token invalid";
+    public static final String TOKEN_VALIDATION_FAILED_MESSAGE = "Token validation failed";
+
+    // validate credentials
+    public static final String NOT_PERMISSIONS_MESSAGE = "You don't have permissions to perform this action";
+
+    // format exceptions of token
+    public static final String CONTENT_TYPE = "application/json";
+    public static final String FORMAT_MESSAGE_EXCEPTION = "{\"error\": \"%s\", \"status\": %d}";
+
 }

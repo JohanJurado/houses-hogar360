@@ -1,8 +1,10 @@
 package com.pragma.hogar360_microservice_house.application.mappers;
 
 import com.pragma.hogar360_microservice_house.application.dtos.request.SaveHouseRequest;
+import com.pragma.hogar360_microservice_house.application.dtos.request.filters.HouseFilterRequest;
 import com.pragma.hogar360_microservice_house.application.dtos.response.HouseResponse;
 import com.pragma.hogar360_microservice_house.domain.model.HouseModel;
+import com.pragma.hogar360_microservice_house.domain.model.filters.HouseFilterModel;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,13 +16,17 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface IHouseDtoMapper {
 
-    @Mapping(target = "cityModel.name", source="cityName")
-    @Mapping(target = "cityModel.departmentModel.name", source="departmentName")
+    @Mapping(target = "locationModel.neighborhood", source="neighborhood")
+    @Mapping(target = "locationModel.cityModel.name", source="cityName")
+    @Mapping(target = "locationModel.cityModel.departmentModel.name", source="departmentName")
     @Mapping(target = "categoryModel.name", source="categoryName")
     HouseModel requestToModel(SaveHouseRequest saveHouseRequest);
 
-    @Mapping(target = "cityName", source="cityModel.name")
-    @Mapping(target = "departmentName", source="cityModel.departmentModel.name")
+    HouseFilterModel requestToModelFilter(HouseFilterRequest houseFilterRequest);
+
+    @Mapping(target = "neighborhood", source="locationModel.neighborhood")
+    @Mapping(target = "cityName", source="locationModel.cityModel.name")
+    @Mapping(target = "departmentName", source="locationModel.cityModel.departmentModel.name")
     @Mapping(target = "categoryName", source="categoryModel.name")
     HouseResponse modelToResponse(HouseModel houseModel);
 

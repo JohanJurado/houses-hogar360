@@ -1,11 +1,11 @@
 package com.pragma.hogar360_microservice_house.infraestructure.endpoints.rest;
 
 import com.pragma.hogar360_microservice_house.application.dtos.request.SaveHouseRequest;
+import com.pragma.hogar360_microservice_house.application.dtos.request.filters.HouseFilterRequest;
 import com.pragma.hogar360_microservice_house.application.dtos.response.HouseResponse;
 import com.pragma.hogar360_microservice_house.application.dtos.response.SaveDtoResponses;
 import com.pragma.hogar360_microservice_house.application.services.IHouseService;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
-import com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,9 +15,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.print.Book;
+
+import static com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants.*;
+import static com.pragma.hogar360_microservice_house.infraestructure.utils.constants.InfrastructureConstants.HAS_ROLE_SELLER;
 
 @RequiredArgsConstructor
 @RestController
@@ -46,6 +50,7 @@ public class HouseController {
             )
     })
     @PostMapping("/")
+    @PreAuthorize(HAS_ROLE_SELLER)
     public ResponseEntity<SaveDtoResponses> save(@RequestBody SaveHouseRequest saveHouseRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(houseService.publish(saveHouseRequest));
     }
@@ -70,20 +75,14 @@ public class HouseController {
     })
     @GetMapping("/")
     public ResponseEntity<Pagination<HouseResponse>> getHouses(
-            @RequestParam(required = false) String nameCity,
-            @RequestParam(required = false) String nameDepartment,
-            @RequestParam(required = false) String nameCategory,
-            @RequestParam(required = false) Long bedroomCount,
-            @RequestParam(required = false) Long bathroomCount,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice,
-            @RequestParam(defaultValue = PaginationConstants.PAGE_DEFAULT_PAGINATION) Integer page,
-            @RequestParam(defaultValue = PaginationConstants.SIZE_DEFAULT_PAGINATION) Integer size,
-            @RequestParam(defaultValue = PaginationConstants.ORDER_BY_HOUSE_DEFAULT_PAGINATION) String orderBy,
-            @RequestParam(defaultValue = PaginationConstants.ORDER_ASC_DEFAULT_PAGINATION) boolean orderAsc
+            @ModelAttribute HouseFilterRequest filterRequest,
+            @RequestParam(defaultValue = PAGE_DEFAULT_PAGINATION) Integer page,
+            @RequestParam(defaultValue = SIZE_DEFAULT_PAGINATION) Integer size,
+            @RequestParam(defaultValue = ORDER_BY_HOUSE_DEFAULT_PAGINATION) String orderBy,
+            @RequestParam(defaultValue = ORDER_ASC_DEFAULT_PAGINATION) boolean orderAsc
     ){
         Pagination<HouseResponse> response = houseService.getHouses(
-                nameCity, nameDepartment, nameCategory, bedroomCount, bathroomCount, minPrice, maxPrice, page, size, orderBy, orderAsc
+                filterRequest, page, size, orderBy, orderAsc
         );
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

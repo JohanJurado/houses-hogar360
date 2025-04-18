@@ -1,12 +1,16 @@
 package com.pragma.hogar360_microservice_house.infraestructure.exceptionshandler;
 
 import com.pragma.hogar360_microservice_house.domain.exceptions.*;
+import com.pragma.hogar360_microservice_house.infraestructure.utils.constants.ExceptionConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
+
+import static com.pragma.hogar360_microservice_house.infraestructure.utils.constants.ExceptionConstants.NOT_PERMISSIONS_MESSAGE;
 
 @ControllerAdvice
 public class ControllerAdvisor {
@@ -78,14 +82,6 @@ public class ControllerAdvisor {
         );
     }
 
-    @ExceptionHandler(LocationNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> locationNotFoundException(LocationNotFoundException exception){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                new ExceptionResponse(ExceptionConstants.LOCATION_NOT_FOUND_MESSAGE, LocalDateTime.now()
-                )
-        );
-    }
-
     @ExceptionHandler(LocationOrderNotFoundException.class)
     public ResponseEntity<ExceptionResponse> locationOrderNotFoundException(LocationOrderNotFoundException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -110,50 +106,34 @@ public class ControllerAdvisor {
         );
     }
 
-    @ExceptionHandler(LocationCityNameCannotBeEmptyException.class)
-    public ResponseEntity<ExceptionResponse> locationCityNameCannotBeEmptyException(LocationCityNameCannotBeEmptyException exception){
+    @ExceptionHandler(CityNameCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> locationCityNameCannotBeEmptyException(CityNameCannotBeEmptyException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ExceptionResponse(ExceptionConstants.LOCATION_CITY_NAME_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
                 )
         );
     }
 
-    @ExceptionHandler(LocationCityDescriptionCannotBeEmptyException.class)
-    public ResponseEntity<ExceptionResponse> locationCityDescriptionCannotBeEmptyException(LocationCityDescriptionCannotBeEmptyException exception){
+    @ExceptionHandler(CityDescriptionCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> locationCityDescriptionCannotBeEmptyException(CityDescriptionCannotBeEmptyException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ExceptionResponse(ExceptionConstants.LOCATION_CITY_DESCRIPTION_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
                 )
         );
     }
 
-    @ExceptionHandler(LocationDepartmentNameCannotBeEmptyException.class)
-    public ResponseEntity<ExceptionResponse> locationDepartmentNameCannotBeEmptyException(LocationDepartmentNameCannotBeEmptyException exception){
+    @ExceptionHandler(DepartmentNameCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> locationDepartmentNameCannotBeEmptyException(DepartmentNameCannotBeEmptyException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ExceptionResponse(ExceptionConstants.LOCATION_DEPARTMENT_NAME_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
                 )
         );
     }
 
-    @ExceptionHandler(LocationDepartmentDescriptionCannotBeEmptyException.class)
-    public ResponseEntity<ExceptionResponse> locationDepartmentDescriptionCannotBeEmptyException(LocationDepartmentDescriptionCannotBeEmptyException exception){
+    @ExceptionHandler(DepartmentDescriptionCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> locationDepartmentDescriptionCannotBeEmptyException(DepartmentDescriptionCannotBeEmptyException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ExceptionResponse(ExceptionConstants.LOCATION_DEPARTMENT_DESCRIPTION_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
-                )
-        );
-    }
-
-    @ExceptionHandler(LocationCityNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> locationCityNotFoundException(LocationCityNotFoundException exception){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ExceptionResponse(ExceptionConstants.LOCATION_CITY_NOT_FOUND_MESSAGE, LocalDateTime.now()
-                )
-        );
-    }
-
-    @ExceptionHandler(LocationDepartmentNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> locationDepartmentNotFoundException(LocationDepartmentNotFoundException exception){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ExceptionResponse(ExceptionConstants.LOCATION_DEPARTMENT_NOT_FOUND_MESSAGE, LocalDateTime.now()
                 )
         );
     }
@@ -224,9 +204,46 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(HouseOrderNotFoundException.class)
     public ResponseEntity<ExceptionResponse> houseOrderNotFoundException(HouseOrderNotFoundException exception){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ExceptionResponse(ExceptionConstants.HOUSE_ORDER_NOT_FOUND_MESSAGE, LocalDateTime.now()
                 )
         );
+    }
+
+    @ExceptionHandler(LocationNeighborhoodCannotBeEmptyException.class)
+    public ResponseEntity<ExceptionResponse> locationNeighborhoodCannotBeEmptyException(LocationNeighborhoodCannotBeEmptyException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_NEIGHBORHOOD_CANNOT_BE_NULL_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(LocationNeighborhoodMaxSizeExceedException.class)
+    public ResponseEntity<ExceptionResponse> locationNeighborhoodMaxSizeExceedException(LocationNeighborhoodMaxSizeExceedException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_NEIGHBORHOOD_MAX_SIZE_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(LocationNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> locationNotFoundException(LocationNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ExceptionResponse(ExceptionConstants.LOCATION_NOT_FOUND_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(HouseLimitActivePublicationDateExceedException.class)
+    public ResponseEntity<ExceptionResponse> houseLimitActivePublicationDateExceedException(HouseLimitActivePublicationDateExceedException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(ExceptionConstants.HOUSE_LIMIT_ACTIVE_PUBLICATION_DATE_MESSAGE, LocalDateTime.now()
+                )
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ExceptionResponse> handleForbidden() {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ExceptionResponse(NOT_PERMISSIONS_MESSAGE, LocalDateTime.now()));
     }
 }

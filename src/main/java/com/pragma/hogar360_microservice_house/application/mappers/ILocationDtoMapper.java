@@ -4,6 +4,7 @@ import com.pragma.hogar360_microservice_house.application.dtos.request.SaveLocat
 import com.pragma.hogar360_microservice_house.application.dtos.response.LocationResponse;
 import com.pragma.hogar360_microservice_house.domain.model.CityModel;
 import com.pragma.hogar360_microservice_house.domain.model.DepartmentModel;
+import com.pragma.hogar360_microservice_house.domain.model.LocationModel;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,36 +16,36 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ILocationDtoMapper {
 
-    @Mapping(target = "name", source="nameCity")
-    @Mapping(target = "description", source="descriptionCity")
-    CityModel requestToModelCity(SaveLocationRequest saveLocationRequest);
+    @Mapping(target = "neighborhood", source="neighborhood")
+    @Mapping(target = "cityModel.name", source="nameCity")
+    @Mapping(target = "cityModel.description", source="descriptionCity")
+    @Mapping(target = "cityModel.departmentModel.name", source="nameDepartment")
+    @Mapping(target = "cityModel.departmentModel.description", source="descriptionDepartment")
+    LocationModel requestToModel(SaveLocationRequest saveLocationRequest);
 
-    @Mapping(target = "name", source="nameDepartment")
-    @Mapping(target = "description", source="descriptionDepartment")
-    DepartmentModel requestToModelDepartment(SaveLocationRequest saveLocationRequest);
+    @Mapping(target = "neighborhood", source="neighborhood")
+    @Mapping(target = "nameCity", source="cityModel.name")
+    @Mapping(target = "descriptionCity", source="cityModel.description")
+    @Mapping(target = "nameDepartment", source="cityModel.departmentModel.name")
+    @Mapping(target = "descriptionDepartment", source="cityModel.departmentModel.description")
+    LocationResponse modelToResponse(LocationModel locationModel);
 
-    @Mapping(target = "nameCity", source="name")
-    @Mapping(target = "descriptionCity", source="description")
-    @Mapping(target = "nameDepartment", source="departmentModel.name")
-    @Mapping(target = "descriptionDepartment", source="departmentModel.description")
-    LocationResponse modelToResponseCity(CityModel cityModel);
-
-    default Pagination<LocationResponse> modelToResponse(Pagination<CityModel> cityModelPagination){
-        if (cityModelPagination == null) {
+    default Pagination<LocationResponse> modelPaginationToResponsePagination(Pagination<LocationModel> locationModelPagination){
+        if (locationModelPagination == null) {
             return null;
         }
 
-        List<LocationResponse> content = cityModelPagination.getContent()
+        List<LocationResponse> content = locationModelPagination.getContent()
                 .stream()
-                .map(this::modelToResponseCity)
+                .map(this::modelToResponse)
                 .toList();
 
         return new Pagination<>(
                 content,
-                cityModelPagination.getPageNumber(),
-                cityModelPagination.getPageSize(),
-                cityModelPagination.getTotalPages(),
-                cityModelPagination.isLast()
+                locationModelPagination.getPageNumber(),
+                locationModelPagination.getPageSize(),
+                locationModelPagination.getTotalPages(),
+                locationModelPagination.isLast()
         );
     }
 }

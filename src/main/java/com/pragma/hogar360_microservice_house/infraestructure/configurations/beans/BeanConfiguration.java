@@ -3,22 +3,15 @@ package com.pragma.hogar360_microservice_house.infraestructure.configurations.be
 import com.pragma.hogar360_microservice_house.domain.ports.in.ICategoryServicePort;
 import com.pragma.hogar360_microservice_house.domain.ports.in.IHouseServicePort;
 import com.pragma.hogar360_microservice_house.domain.ports.in.ILocationServicePort;
-import com.pragma.hogar360_microservice_house.domain.ports.out.ICategoryPersistencePort;
-import com.pragma.hogar360_microservice_house.domain.ports.out.IHousePersistencePort;
-import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersistencePort;
+import com.pragma.hogar360_microservice_house.domain.ports.in.events.IUpdateHouseStatusServicePort;
+import com.pragma.hogar360_microservice_house.domain.ports.out.*;
 import com.pragma.hogar360_microservice_house.domain.usecases.CategoryUseCase;
 import com.pragma.hogar360_microservice_house.domain.usecases.HouseUseCase;
 import com.pragma.hogar360_microservice_house.domain.usecases.LocationUseCase;
-import com.pragma.hogar360_microservice_house.infraestructure.adapters.persistence.CategoryPersistenceAdapter;
-import com.pragma.hogar360_microservice_house.infraestructure.adapters.persistence.HousePersistenceAdapter;
-import com.pragma.hogar360_microservice_house.infraestructure.adapters.persistence.LocationPersistenceAdapter;
-import com.pragma.hogar360_microservice_house.infraestructure.mappers.ICategoryEntityMapper;
-import com.pragma.hogar360_microservice_house.infraestructure.mappers.IHouseEntityMapper;
-import com.pragma.hogar360_microservice_house.infraestructure.mappers.ILocationEntityMapper;
-import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.ICategoryRepository;
-import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.ICityRepository;
-import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.IDepartmentRepository;
-import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.IHouseRepository;
+import com.pragma.hogar360_microservice_house.domain.usecases.events.UpdateHousesStatusUseCase;
+import com.pragma.hogar360_microservice_house.infraestructure.adapters.persistence.*;
+import com.pragma.hogar360_microservice_house.infraestructure.mappers.*;
+import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,11 +21,16 @@ import org.springframework.context.annotation.Configuration;
 public class BeanConfiguration {
 
     private final ICategoryEntityMapper categoryEntityMapper;
+    private final ILocationEntityMapper locationEntityMapper;
+    private final ICityEntityMapper cityEntityMapper;
+    private final IDepartmentEntityMapper departmentEntityMapper;
+    private final IHouseEntityMapper houseEntityMapper;
+
+
     private final ICategoryRepository categoryRepository;
+    private final ILocationRepository locationRepository;
     private final ICityRepository cityRepository;
     private final IDepartmentRepository departmentRepository;
-    private final ILocationEntityMapper locationEntityMapper;
-    private final IHouseEntityMapper houseEntityMapper;
     private final IHouseRepository houseRepository;
 
     // category
@@ -49,13 +47,27 @@ public class BeanConfiguration {
     // location
     @Bean
     public ILocationServicePort locationServicePort(){
-        return new LocationUseCase(locationPersistencePort());
+        return new LocationUseCase(locationPersistencePort(), cityPersistencePort(), departmentPersistencePort());
     }
 
     @Bean
     public ILocationPersistencePort locationPersistencePort(){
         return new LocationPersistenceAdapter(
-                cityRepository, departmentRepository, locationEntityMapper
+                locationRepository, locationEntityMapper
+        );
+    }
+
+    @Bean
+    public ICityPersistencePort cityPersistencePort(){
+        return new CityPersistenceAdapter(
+                cityRepository, cityEntityMapper
+        );
+    }
+
+    @Bean
+    public IDepartmentPersistencePort departmentPersistencePort(){
+        return new DepartmentPersistenceAdapter(
+                departmentRepository, departmentEntityMapper
         );
     }
 
@@ -68,5 +80,11 @@ public class BeanConfiguration {
     @Bean
     public IHousePersistencePort housePersistencePort(){
         return new HousePersistenceAdapter(houseEntityMapper, houseRepository);
+    }
+
+    // event - house
+    @Bean
+    public IUpdateHouseStatusServicePort updateHouseStatusServicePort(){
+        return new UpdateHousesStatusUseCase(housePersistencePort());
     }
 }

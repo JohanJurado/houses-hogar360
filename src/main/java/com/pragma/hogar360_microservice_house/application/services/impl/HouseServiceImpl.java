@@ -1,6 +1,7 @@
 package com.pragma.hogar360_microservice_house.application.services.impl;
 
 import com.pragma.hogar360_microservice_house.application.dtos.request.SaveHouseRequest;
+import com.pragma.hogar360_microservice_house.application.dtos.request.filters.HouseFilterRequest;
 import com.pragma.hogar360_microservice_house.application.dtos.response.HouseResponse;
 import com.pragma.hogar360_microservice_house.application.dtos.response.SaveDtoResponses;
 import com.pragma.hogar360_microservice_house.application.mappers.IHouseDtoMapper;
@@ -27,13 +28,10 @@ public class HouseServiceImpl implements IHouseService {
     }
 
     @Override
-    public Pagination<HouseResponse> getHouses(String nameCity, String nameDepartment, String nameCategory, Long bedroomCount,
-                                               Long bathroomCount, Double minPrice, Double maxPrice,
-                                               Integer page, Integer size, String orderBy, boolean orderAsc) {
+    public Pagination<HouseResponse> getHouses(HouseFilterRequest filterRequest, Integer page, Integer size, String orderBy, boolean orderAsc) {
         return houseDtoMapper.modelPaginationToResponsePagination(
                 houseServicePort.getHouses(
-                        nameCity, nameDepartment, nameCategory, bedroomCount, bathroomCount,
-                        minPrice, maxPrice, page, size, orderBy, orderAsc
+                        houseDtoMapper.requestToModelFilter(filterRequest), page, size, orderBy, orderAsc
                 )
         );
     }

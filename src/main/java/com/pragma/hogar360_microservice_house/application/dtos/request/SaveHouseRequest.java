@@ -9,6 +9,7 @@ public record SaveHouseRequest(
         Long bathroomCount,
         Double price,
         LocalDate activePublicationDate,
+        String neighborhood,
         String cityName,
         String departmentName,
         String categoryName

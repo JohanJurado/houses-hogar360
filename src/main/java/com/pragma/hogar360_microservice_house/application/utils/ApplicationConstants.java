@@ -1,10 +1,10 @@
 package com.pragma.hogar360_microservice_house.application.utils;
 
-import com.pragma.hogar360_microservice_house.domain.util.constants.DomainConstants;
+import static com.pragma.hogar360_microservice_house.domain.util.constants.GlobalConstants.UTILITY_CLASS_MESSAGE;
 
 public class ApplicationConstants {
     private ApplicationConstants() {
-        throw new IllegalStateException(DomainConstants.UTILITY_CLASS_MESSAGE);
+        throw new IllegalStateException(UTILITY_CLASS_MESSAGE);
     }
 
     public static final String SAVE_CATEGORY_RESPONSE_MESSAGE = "Category saved successfully.";
