@@ -15,11 +15,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.print.Book;
 
 import static com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants.*;
+import static com.pragma.hogar360_microservice_house.infraestructure.utils.constants.InfrastructureConstants.HAS_ROLE_SELLER;
 
 @RequiredArgsConstructor
 @RestController
@@ -48,6 +50,7 @@ public class HouseController {
             )
     })
     @PostMapping("/")
+    @PreAuthorize(HAS_ROLE_SELLER)
     public ResponseEntity<SaveDtoResponses> save(@RequestBody SaveHouseRequest saveHouseRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(houseService.publish(saveHouseRequest));
     }

@@ -26,5 +26,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
+security:
+  jwt:
+    user:
+      generator: BackendApiUserHogar360
+    key:
+      private: eENRlFL9i0kFx+JhJGQYk8KGtIwx5Vm/m+aGJXmMNh0=
+
 appDescription: "Hogar360 API"
 appVersion: "1.0.0"

@@ -1,4 +1,4 @@
-package com.pragma.hogar360_microservice_house.infraestructure.exceptionshandler;
+package com.pragma.hogar360_microservice_house.infraestructure.utils.constants;
 
 public class ExceptionConstants {
     private ExceptionConstants(){}
@@ -37,4 +37,18 @@ public class ExceptionConstants {
     public static final String HOUSE_PRICE_CANNOT_BE_NULL_MESSAGE = "The price of house cannot be null or blank";
     public static final String HOUSE_ORDER_NOT_FOUND_MESSAGE = "Order house not found";
     public static final String HOUSE_LIMIT_ACTIVE_PUBLICATION_DATE_MESSAGE = "The active publication date cannot be higher than the current date";
+
+    // token validation
+    public static final String TOKEN_EXPIRED_MESSAGE = "Token has expired";
+    public static final String TOKEN_MALFORMED_MESSAGE = "Token is malformed";
+    public static final String TOKEN_INVALID_MESSAGE = "Token invalid";
+    public static final String TOKEN_VALIDATION_FAILED_MESSAGE = "Token validation failed";
+
+    // validate credentials
+    public static final String NOT_PERMISSIONS_MESSAGE = "You don't have permissions to perform this action";
+
+    // format exceptions of token
+    public static final String CONTENT_TYPE = "application/json";
+    public static final String FORMAT_MESSAGE_EXCEPTION = "{\"error\": \"%s\", \"status\": %d}";
+
 }

@@ -15,9 +15,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.print.Book;
+
+import static com.pragma.hogar360_microservice_house.infraestructure.utils.constants.InfrastructureConstants.HAS_ROLE_ADMIN;
 
 @RequiredArgsConstructor
 @RestController
@@ -46,6 +49,7 @@ public class CategoryController {
         )
     })
     @PostMapping("/")
+    @PreAuthorize(HAS_ROLE_ADMIN)
     public ResponseEntity<SaveDtoResponses> save(@RequestBody SaveCategoryRequest saveCategoryRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.save(saveCategoryRequest));
     }
