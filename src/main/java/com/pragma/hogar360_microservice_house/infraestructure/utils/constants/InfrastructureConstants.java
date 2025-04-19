@@ -13,7 +13,6 @@ public class InfrastructureConstants {
     public static final String HAS_ROLE_SELLER = "hasRole('SELLER')";
 
     // claim keys
-    public static final String EMAIL_CLAIM_KEY = "email";
     public static final String AUTHORITIES_CLAIM_KEY = "authorities";
 
     // token constants
