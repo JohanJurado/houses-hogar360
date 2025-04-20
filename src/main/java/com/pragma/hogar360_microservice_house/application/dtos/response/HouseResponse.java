@@ -7,6 +7,7 @@ public record HouseResponse(
         Long bathroomCount,
         Double price,
         String publicationStatus,
+        String emailSeller,
         String neighborhood,
         String cityName,
         String departmentName,

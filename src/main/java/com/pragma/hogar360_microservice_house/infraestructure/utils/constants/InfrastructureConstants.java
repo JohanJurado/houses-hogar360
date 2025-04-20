@@ -11,6 +11,7 @@ public class InfrastructureConstants {
     // role constants
     public static final String HAS_ROLE_ADMIN = "hasRole('ADMIN')";
     public static final String HAS_ROLE_SELLER = "hasRole('SELLER')";
+    public static final String HAS_ROLE_MICROSERVICE = "hasRole('MICROSERVICE')";
 
     // claim keys
     public static final String AUTHORITIES_CLAIM_KEY = "authorities";

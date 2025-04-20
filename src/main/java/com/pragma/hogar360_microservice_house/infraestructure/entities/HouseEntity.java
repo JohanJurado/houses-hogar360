@@ -19,6 +19,7 @@ public class HouseEntity {
     private LocalDate activePublicationDate;
     private LocalDate publicationDate;
     private String publicationStatus;
+    private String emailSeller;
 
     @ManyToOne
     @JoinColumn(name = "location_id")
@@ -102,6 +103,14 @@ public class HouseEntity {
 
     public void setPublicationStatus(String publicationStatus) {
         this.publicationStatus = publicationStatus;
+    }
+
+    public String getEmailSeller() {
+        return emailSeller;
+    }
+
+    public void setEmailSeller(String emailSeller) {
+        this.emailSeller = emailSeller;
     }
 
     public LocationEntity getLocationEntity() {

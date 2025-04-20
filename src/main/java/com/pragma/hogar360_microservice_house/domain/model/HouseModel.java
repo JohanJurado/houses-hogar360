@@ -17,6 +17,7 @@ public class HouseModel {
     private LocalDate publicationDate;
     private String publicationStatus;
 
+    private String emailSeller;
     private LocationModel locationModel;
     private CategoryModel categoryModel;
 
@@ -100,6 +101,14 @@ public class HouseModel {
         this.publicationStatus = (publicationDate.isBefore(activePublicationDate))
                 ? PAUSED_STATE_HOUSE
                 : PUBLISHED_STATE_HOUSE;
+    }
+
+    public String getEmailSeller() {
+        return emailSeller;
+    }
+
+    public void setEmailSeller(String emailSeller) {
+        this.emailSeller = emailSeller;
     }
 
     public LocationModel getLocationModel() {

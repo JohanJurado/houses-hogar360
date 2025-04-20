@@ -26,4 +26,6 @@ public interface IHouseRepository extends JpaRepository<HouseEntity, Long> {
 
     Optional<HouseEntity> findById(Long id);
     List<HouseEntity> findByPublicationStatusAndActivePublicationDate(String publicationStatus, LocalDate activePublicationDate);
+
+    boolean existsByIdAndEmailSeller(Long id, String emailSeller);
 }

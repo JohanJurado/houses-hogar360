@@ -7,6 +7,7 @@ import com.pragma.hogar360_microservice_house.domain.ports.in.IHouseServicePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ICategoryPersistencePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.IHousePersistencePort;
 import com.pragma.hogar360_microservice_house.domain.ports.out.ILocationPersistencePort;
+import com.pragma.hogar360_microservice_house.domain.ports.out.ISecurityServicePort;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 
 import java.time.LocalDate;
@@ -23,11 +24,13 @@ public class HouseUseCase implements IHouseServicePort {
     private final IHousePersistencePort housePersistencePort;
     private final ICategoryPersistencePort categoryPersistencePort;
     private final ILocationPersistencePort locationPersistencePort;
+    private final ISecurityServicePort securityServicePort;
 
-    public HouseUseCase(IHousePersistencePort housePersistencePort, ICategoryPersistencePort categoryPersistencePort, ILocationPersistencePort locationPersistencePort) {
+    public HouseUseCase(IHousePersistencePort housePersistencePort, ICategoryPersistencePort categoryPersistencePort, ILocationPersistencePort locationPersistencePort, ISecurityServicePort securityServicePort) {
         this.housePersistencePort = housePersistencePort;
         this.categoryPersistencePort = categoryPersistencePort;
         this.locationPersistencePort = locationPersistencePort;
+        this.securityServicePort = securityServicePort;
     }
 
     @Override
@@ -76,6 +79,7 @@ public class HouseUseCase implements IHouseServicePort {
         setLocationModelInHouseModel(houseModel);
         setCategoryModelInHouseModel(houseModel);
 
+        houseModel.setEmailSeller(securityServicePort.getAuthenticatedEmail());
         houseModel.setPublicationDate(LocalDate.now());
         houseModel.calculateInitialStatus();
     }
