@@ -35,6 +35,8 @@ class HouseUseCaseTest {
     private ICategoryPersistencePort categoryPersistencePort;
     @Mock
     private ILocationPersistencePort locationPersistencePort;
+    @Mock
+    private ISecurityServicePort securityServicePort;
 
     @InjectMocks
     private HouseUseCase houseUseCase;
@@ -47,6 +49,7 @@ class HouseUseCaseTest {
             when(locationPersistencePort.findByNeighborhoodAndCityNameAndDepartmentName(any(), any(), any()))
                     .thenReturn(Optional.of(getValidLocation()));
             when(categoryPersistencePort.findByName(any())).thenReturn(Optional.of(getValidCategory()));
+            when(securityServicePort.getAuthenticatedEmail()).thenReturn(EMAIL_SELLER);
 
             houseUseCase.publish(house);
 

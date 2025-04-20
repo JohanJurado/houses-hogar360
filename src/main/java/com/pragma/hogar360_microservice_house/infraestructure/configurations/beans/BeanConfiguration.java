@@ -10,6 +10,7 @@ import com.pragma.hogar360_microservice_house.domain.usecases.HouseUseCase;
 import com.pragma.hogar360_microservice_house.domain.usecases.LocationUseCase;
 import com.pragma.hogar360_microservice_house.domain.usecases.events.UpdateHousesStatusUseCase;
 import com.pragma.hogar360_microservice_house.infraestructure.adapters.persistence.*;
+import com.pragma.hogar360_microservice_house.infraestructure.adapters.security.SecurityServiceAdapter;
 import com.pragma.hogar360_microservice_house.infraestructure.mappers.*;
 import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.*;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +75,7 @@ public class BeanConfiguration {
     // house
     @Bean
     public IHouseServicePort houseServicePort(){
-        return new HouseUseCase(housePersistencePort(), categoryPersistencePort(), locationPersistencePort());
+        return new HouseUseCase(housePersistencePort(), categoryPersistencePort(), locationPersistencePort(),securityServicePort());
     }
 
     @Bean
@@ -86,5 +87,11 @@ public class BeanConfiguration {
     @Bean
     public IUpdateHouseStatusServicePort updateHouseStatusServicePort(){
         return new UpdateHousesStatusUseCase(housePersistencePort());
+    }
+
+    // security
+    @Bean
+    public ISecurityServicePort securityServicePort(){
+        return new SecurityServiceAdapter();
     }
 }
