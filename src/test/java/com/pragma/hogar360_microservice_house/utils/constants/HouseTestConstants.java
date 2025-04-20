@@ -22,6 +22,8 @@ public class HouseTestConstants {
     public static final String STATE_PUBLICATION_PUBLISHED = "PUBLISHED";
     public static final String STATE_PUBLICATION_PAUSED = "PAUSED";
 
+    public static final String EMAIL_SELLER = "EMAILEXAMPLE@EMAIL.COM";
+
     public static final String ORDER_BY_OTHER_PAGINATION = "Other";
     public static final boolean ORDER_ASC_PAGINATION = true;
 
