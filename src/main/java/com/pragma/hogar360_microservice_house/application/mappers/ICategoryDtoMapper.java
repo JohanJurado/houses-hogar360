@@ -30,6 +30,7 @@ public interface ICategoryDtoMapper {
                 content,
                 categoryModels.getPageNumber(),
                 categoryModels.getPageSize(),
+                categoryModels.getTotalElements(),
                 categoryModels.getTotalPages(),
                 categoryModels.isLast()
         );

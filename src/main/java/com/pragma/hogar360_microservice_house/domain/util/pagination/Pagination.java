@@ -25,11 +25,11 @@ public class Pagination<T> {
         this.last = pageNumber >= totalPages - PAGE_DIFF_INDEX;
     }
 
-    public Pagination(List<T> content, int pageNumber, int pageSize, int totalPages, boolean last) {
+    public Pagination(List<T> content, int pageNumber, int pageSize, int totalElements, int totalPages, boolean last) {
         this.pageNumber = pageNumber;
+        this.totalElements = totalElements;
         this.pageSize = pageSize;
         this.content = content;
-        this.totalElements = content.size();
         this.totalPages = totalPages;
         this.last = last;
     }

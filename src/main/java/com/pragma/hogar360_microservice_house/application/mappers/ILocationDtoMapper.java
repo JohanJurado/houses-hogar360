@@ -42,6 +42,7 @@ public interface ILocationDtoMapper {
                 content,
                 locationModelPagination.getPageNumber(),
                 locationModelPagination.getPageSize(),
+                locationModelPagination.getTotalElements(),
                 locationModelPagination.getTotalPages(),
                 locationModelPagination.isLast()
         );

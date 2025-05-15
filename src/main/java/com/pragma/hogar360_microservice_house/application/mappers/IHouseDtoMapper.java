@@ -44,6 +44,7 @@ public interface IHouseDtoMapper {
                 content,
                 houseModelPagination.getPageNumber(),
                 houseModelPagination.getPageSize(),
+                houseModelPagination.getTotalElements(),
                 houseModelPagination.getTotalPages(),
                 houseModelPagination.isLast()
         );
