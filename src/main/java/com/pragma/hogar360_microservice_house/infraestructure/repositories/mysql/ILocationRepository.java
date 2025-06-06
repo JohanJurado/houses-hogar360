@@ -1,5 +1,6 @@
 package com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql;
 
+import com.pragma.hogar360_microservice_house.infraestructure.entities.CityEntity;
 import com.pragma.hogar360_microservice_house.infraestructure.entities.LocationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,12 @@ public interface ILocationRepository extends JpaRepository<LocationEntity, Long>
             "       c.name LIKE CONCAT('%', :nameLocation, '%') OR " +
             "       d.name LIKE CONCAT('%', :nameLocation, '%'))")
     List<LocationEntity> findByCityOrDepartment(@Param("nameLocation") String nameLocation);
+
+    // --------
+    @Query("SELECT l FROM LocationEntity l WHERE l.neighborhood LIKE CONCAT('%', :nameNeighborhood, '%') AND l.cityEntity.id = :idCity AND l.cityEntity.departmentEntity.id = :idDepartment")
+    List<LocationEntity> findByMatches(
+            @Param("nameNeighborhood") String nameNeighborhood,
+            @Param("idCity") Long idCity,
+            @Param("idDepartment") Long idDepartment
+    );
 }

@@ -21,6 +21,7 @@ public interface IHouseRepository extends JpaRepository<HouseEntity, Long> {
             "AND (:#{#filter.bathroomCount} IS NULL OR h.bathroomCount = :#{#filter.bathroomCount}) " +
             "AND (:#{#filter.minPrice} IS NULL OR h.price >= :#{#filter.minPrice}) " +
             "AND (:#{#filter.maxPrice} IS NULL OR h.price <= :#{#filter.maxPrice}) " +
+            "AND (:#{#filter.emailSeller} IS NULL OR h.emailSeller = :#{#filter.emailSeller}) " +
             "AND h.publicationStatus = :publicationStatus")
     List<HouseEntity> findHousesByFilters(@Param("filter") HouseFilterModel filter, @Param("publicationStatus") String publicationStatus);
 

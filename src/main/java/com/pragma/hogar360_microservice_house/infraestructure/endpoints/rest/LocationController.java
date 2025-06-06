@@ -6,6 +6,12 @@ import com.pragma.hogar360_microservice_house.application.dtos.response.SaveDtoR
 import com.pragma.hogar360_microservice_house.application.services.ILocationService;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 import com.pragma.hogar360_microservice_house.domain.util.pagination.PaginationConstants;
+import com.pragma.hogar360_microservice_house.infraestructure.entities.CityEntity;
+import com.pragma.hogar360_microservice_house.infraestructure.entities.DepartmentEntity;
+import com.pragma.hogar360_microservice_house.infraestructure.entities.LocationEntity;
+import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.ICityRepository;
+import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.IDepartmentRepository;
+import com.pragma.hogar360_microservice_house.infraestructure.repositories.mysql.ILocationRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,6 +25,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.print.Book;
+import java.util.List;
+import java.util.Objects;
 
 import static com.pragma.hogar360_microservice_house.infraestructure.utils.constants.InfrastructureConstants.HAS_ROLE_ADMIN;
 
@@ -81,6 +89,42 @@ public class LocationController {
             @RequestParam(defaultValue = PaginationConstants.ORDER_ASC_DEFAULT_PAGINATION) boolean orderAsc
     ){
         Pagination<LocationResponse> response = locationService.getLocations(nameLocation, page, size, orderBy, orderAsc);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // endpoints adicionales para el front (no hacen parte del reto backend)
+
+    private final IDepartmentRepository departmentRepository;
+    private final ICityRepository cityRepository;
+    private final ILocationRepository locationRepository;
+
+    @GetMapping("/get-departments")
+    public ResponseEntity<List<DepartmentEntity>> getDepartments(@RequestParam(defaultValue = "") String nameDepartment){
+        List<DepartmentEntity> response;
+        if (Objects.equals(nameDepartment, "")){
+             response = departmentRepository.findAll();
+        } else {
+            response = departmentRepository.findByMatches(nameDepartment.toUpperCase());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/get-cities")
+    public ResponseEntity<List<CityEntity>> getCities(
+            @RequestParam(defaultValue = "") String nameCity,
+            @RequestParam(defaultValue = "") Long idDepartment
+    ){
+        List<CityEntity> response = cityRepository.findByMatches(nameCity.toUpperCase(), idDepartment);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/get-neighborhoods")
+    public ResponseEntity<List<LocationEntity>> getNeighborhoods(
+            @RequestParam(defaultValue = "") String nameNeighborhood,
+            @RequestParam(defaultValue = "") Long idCity,
+            @RequestParam(defaultValue = "") Long idDepartment
+    ){
+        List<LocationEntity> response = locationRepository.findByMatches(nameNeighborhood.toUpperCase(), idCity, idDepartment);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

@@ -9,6 +9,7 @@ public interface IHouseServicePort {
     void publish(HouseModel houseModel);
     Pagination<HouseModel> getHouses(
             HouseFilterModel filterModel,
+            Boolean filterBySeller,
             Integer page,
             Integer size,
             String orderBy,

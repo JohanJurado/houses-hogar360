@@ -103,7 +103,7 @@ class HouseUseCaseTest {
             List<HouseModel> houses = getMultipleHouses();
             when(housePersistencePort.findHousesByFilters(any(), any())).thenReturn(houses);
 
-            Pagination<HouseModel> result = houseUseCase.getHouses(filter, DEFAULT_PAGE, DEFAULT_SIZE, PRICE_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
+            Pagination<HouseModel> result = houseUseCase.getHouses(filter, null, DEFAULT_PAGE, DEFAULT_SIZE, PRICE_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
 
             assertFalse(result.getContent().isEmpty());
             verify(housePersistencePort).findHousesByFilters(filter, STATE_PUBLICATION_PUBLISHED);
@@ -115,7 +115,7 @@ class HouseUseCaseTest {
             List<HouseModel> houses = getMultipleHouses();
             when(housePersistencePort.findHousesByFilters(any(), any())).thenReturn(houses);
 
-            Pagination<HouseModel> result = houseUseCase.getHouses(filter, DEFAULT_PAGE, DEFAULT_SIZE, DEPARTMENT_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
+            Pagination<HouseModel> result = houseUseCase.getHouses(filter, null, DEFAULT_PAGE, DEFAULT_SIZE, DEPARTMENT_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
 
             assertFalse(result.getContent().isEmpty());
             verify(housePersistencePort).findHousesByFilters(filter, STATE_PUBLICATION_PUBLISHED);
@@ -127,7 +127,7 @@ class HouseUseCaseTest {
             List<HouseModel> houses = getMultipleHouses();
             when(housePersistencePort.findHousesByFilters(any(), any())).thenReturn(houses);
 
-            Pagination<HouseModel> result = houseUseCase.getHouses(filter, DEFAULT_PAGE, DEFAULT_SIZE, CITY_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
+            Pagination<HouseModel> result = houseUseCase.getHouses(filter, null, DEFAULT_PAGE, DEFAULT_SIZE, CITY_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
 
             assertFalse(result.getContent().isEmpty());
             verify(housePersistencePort).findHousesByFilters(filter, STATE_PUBLICATION_PUBLISHED);
@@ -139,7 +139,7 @@ class HouseUseCaseTest {
             List<HouseModel> houses = getMultipleHouses();
             when(housePersistencePort.findHousesByFilters(any(), any())).thenReturn(houses);
 
-            Pagination<HouseModel> result = houseUseCase.getHouses(filter, DEFAULT_PAGE, DEFAULT_SIZE, BATHROOM_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
+            Pagination<HouseModel> result = houseUseCase.getHouses(filter, null, DEFAULT_PAGE, DEFAULT_SIZE, BATHROOM_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
 
             assertFalse(result.getContent().isEmpty());
             verify(housePersistencePort).findHousesByFilters(filter, STATE_PUBLICATION_PUBLISHED);
@@ -151,7 +151,7 @@ class HouseUseCaseTest {
             List<HouseModel> houses = getMultipleHouses();
             when(housePersistencePort.findHousesByFilters(any(), any())).thenReturn(houses);
 
-            Pagination<HouseModel> result = houseUseCase.getHouses(filter, DEFAULT_PAGE, DEFAULT_SIZE, BEDROOM_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
+            Pagination<HouseModel> result = houseUseCase.getHouses(filter, null, DEFAULT_PAGE, DEFAULT_SIZE, BEDROOM_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
 
             assertFalse(result.getContent().isEmpty());
             verify(housePersistencePort).findHousesByFilters(filter, STATE_PUBLICATION_PUBLISHED);
@@ -163,7 +163,7 @@ class HouseUseCaseTest {
             List<HouseModel> houses = getMultipleHouses();
             when(housePersistencePort.findHousesByFilters(any(), any())).thenReturn(houses);
 
-            Pagination<HouseModel> result = houseUseCase.getHouses(filter, DEFAULT_PAGE, DEFAULT_SIZE, CATEGORY_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
+            Pagination<HouseModel> result = houseUseCase.getHouses(filter, null, DEFAULT_PAGE, DEFAULT_SIZE, CATEGORY_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
 
             assertFalse(result.getContent().isEmpty());
             verify(housePersistencePort).findHousesByFilters(filter, STATE_PUBLICATION_PUBLISHED);
@@ -175,7 +175,7 @@ class HouseUseCaseTest {
             when(housePersistencePort.findHousesByFilters(any(), any())).thenReturn(houses);
 
             Pagination<HouseModel> result = houseUseCase.getHouses(new HouseFilterModel(),
-                    DEFAULT_PAGE, DEFAULT_SIZE, PRICE_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
+                    null, DEFAULT_PAGE, DEFAULT_SIZE, PRICE_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
 
             assertTrue(result.getContent().get(0).getPrice() <= result.getContent().get(1).getPrice());
         }
@@ -202,7 +202,7 @@ class HouseUseCaseTest {
             HouseFilterModel houseFilterModel = new HouseFilterModel();
 
             assertThrows(HouseOrderNotFoundException.class,
-                    () -> houseUseCase.getHouses(houseFilterModel, DEFAULT_PAGE, DEFAULT_SIZE, ORDER_BY_OTHER_PAGINATION, ORDER_ASC_PAGINATION)
+                    () -> houseUseCase.getHouses(houseFilterModel, null, DEFAULT_PAGE, DEFAULT_SIZE, ORDER_BY_OTHER_PAGINATION, ORDER_ASC_PAGINATION)
             );
         }
 
@@ -212,7 +212,7 @@ class HouseUseCaseTest {
             when(housePersistencePort.findHousesByFilters(any(), any())).thenReturn(houses);
 
             Pagination<HouseModel> result = houseUseCase.getHouses(new HouseFilterModel(),
-                    DEFAULT_PAGE, SIZE_ONE, PRICE_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
+                    null, DEFAULT_PAGE, SIZE_ONE, PRICE_ORDER_BY_PAGINATION, ORDER_ASC_PAGINATION);
 
             assertEquals(SIZE_ONE, result.getContent().size());
         }

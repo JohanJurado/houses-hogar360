@@ -1,6 +1,7 @@
 package com.pragma.hogar360_microservice_house.application.dtos.request.filters;
 
 public record HouseFilterRequest(
+        String emailSeller,
         String neighborhood,
         String nameCity,
         String nameDepartment,

@@ -44,8 +44,11 @@ public class HouseUseCase implements IHouseServicePort {
     }
 
     @Override
-    public Pagination<HouseModel> getHouses(HouseFilterModel filterModel, Integer page, Integer size,
+    public Pagination<HouseModel> getHouses(HouseFilterModel filterModel, Boolean filterBySeller, Integer page, Integer size,
                                             String orderBy, boolean orderAsc) {
+        if (Boolean.TRUE.equals(filterBySeller)){
+            filterModel.setEmailSeller(securityServicePort.getAuthenticatedEmail());
+        }
         List<HouseModel> houseModelFilterList = housePersistencePort.findHousesByFilters(filterModel, PUBLISHED_STATE_HOUSE);
 
         return new Pagination<>(houseModelFilterList, page, size, defineHouseAttributeToSort(orderBy), orderAsc);

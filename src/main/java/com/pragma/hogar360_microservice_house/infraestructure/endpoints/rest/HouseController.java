@@ -76,13 +76,14 @@ public class HouseController {
     @GetMapping("/")
     public ResponseEntity<Pagination<HouseResponse>> getHouses(
             @ModelAttribute HouseFilterRequest filterRequest,
+            @RequestParam(required = false) Boolean filterBySeller,
             @RequestParam(defaultValue = PAGE_DEFAULT_PAGINATION) Integer page,
             @RequestParam(defaultValue = SIZE_DEFAULT_PAGINATION) Integer size,
             @RequestParam(defaultValue = ORDER_BY_HOUSE_DEFAULT_PAGINATION) String orderBy,
             @RequestParam(defaultValue = ORDER_ASC_DEFAULT_PAGINATION) boolean orderAsc
     ){
         Pagination<HouseResponse> response = houseService.getHouses(
-                filterRequest, page, size, orderBy, orderAsc
+                filterRequest, filterBySeller, page, size, orderBy, orderAsc
         );
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

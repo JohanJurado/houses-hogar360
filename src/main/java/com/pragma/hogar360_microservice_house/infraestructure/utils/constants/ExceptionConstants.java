@@ -36,7 +36,7 @@ public class ExceptionConstants {
     public static final String HOUSE_NAME_CANNOT_BE_NULL_MESSAGE = "The name of house cannot be null or blank";
     public static final String HOUSE_PRICE_CANNOT_BE_NULL_MESSAGE = "The price of house cannot be null or blank";
     public static final String HOUSE_ORDER_NOT_FOUND_MESSAGE = "Order house not found";
-    public static final String HOUSE_LIMIT_ACTIVE_PUBLICATION_DATE_MESSAGE = "The active publication date cannot be higher than the current date";
+    public static final String HOUSE_LIMIT_ACTIVE_PUBLICATION_DATE_MESSAGE = "The active publication date cannot be higher than one month of the current date";
 
     // token validation
     public static final String TOKEN_EXPIRED_MESSAGE = "Token has expired";

@@ -9,6 +9,6 @@ import com.pragma.hogar360_microservice_house.domain.util.pagination.Pagination;
 public interface IHouseService {
 
    SaveDtoResponses publish(SaveHouseRequest saveHouseRequest);
-   Pagination<HouseResponse> getHouses(HouseFilterRequest filterRequest, Integer page, Integer size,
+   Pagination<HouseResponse> getHouses(HouseFilterRequest filterRequest, Boolean filterBySeller, Integer page, Integer size,
                                        String orderBy, boolean orderAsc);
 }

@@ -2,6 +2,7 @@ package com.pragma.hogar360_microservice_house.domain.model.filters;
 
 public class HouseFilterModel {
 
+    private String emailSeller;
     private String neighborhood;
     private String nameCity;
     private String nameDepartment;
@@ -13,6 +14,14 @@ public class HouseFilterModel {
 
     public HouseFilterModel() {
         // Inserting data into Setters
+    }
+
+    public String getEmailSeller() {
+        return emailSeller;
+    }
+
+    public void setEmailSeller(String emailSeller) {
+        this.emailSeller = emailSeller;
     }
 
     public String getNeighborhood() {

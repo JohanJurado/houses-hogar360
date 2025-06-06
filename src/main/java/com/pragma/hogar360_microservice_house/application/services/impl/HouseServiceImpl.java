@@ -28,10 +28,10 @@ public class HouseServiceImpl implements IHouseService {
     }
 
     @Override
-    public Pagination<HouseResponse> getHouses(HouseFilterRequest filterRequest, Integer page, Integer size, String orderBy, boolean orderAsc) {
+    public Pagination<HouseResponse> getHouses(HouseFilterRequest filterRequest, Boolean filterBySeller, Integer page, Integer size, String orderBy, boolean orderAsc) {
         return houseDtoMapper.modelPaginationToResponsePagination(
                 houseServicePort.getHouses(
-                        houseDtoMapper.requestToModelFilter(filterRequest), page, size, orderBy, orderAsc
+                        houseDtoMapper.requestToModelFilter(filterRequest), filterBySeller, page, size, orderBy, orderAsc
                 )
         );
     }
